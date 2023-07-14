@@ -13,8 +13,20 @@ export default class Pet extends BaseModel {
   public updatedAt: DateTime
 
   @column()
+  public nome: string
+
+  @column()
+  public especie: string
+
+  @column()
+  public cor: string
+
+  @column()
   public situacao: Situacao
 
-  @column.dateTime()
+  @column()
+  public comentario?: string
+
+  @column.dateTime({ serializeAs: 'vistoAs' })
   public vistoAs: DateTime
 }

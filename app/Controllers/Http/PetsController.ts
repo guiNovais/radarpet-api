@@ -15,4 +15,8 @@ export default class PetsController {
       .where('visto_as', '>', anoPassado)
       .andWhere('situacao', Situacao.Perdido)
   }
+
+  public async show({ request }) {
+    return await Pet.findOrFail(request.routeParams.id)
+  }
 }

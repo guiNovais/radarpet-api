@@ -13,8 +13,12 @@ export default class extends BaseSchema {
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
 
-      table.timestamp('visto_as')
+      table.string('nome')
+      table.string('especie')
+      table.string('cor')
       table.string('situacao')
+      table.string('comentario')
+      table.timestamp('visto_as')
     })
   }
 

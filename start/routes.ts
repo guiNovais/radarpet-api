@@ -25,3 +25,4 @@ Route.get('/', async () => {
 })
 
 Route.get('/pets', 'PetsController.index')
+Route.get('/pets/:id', 'PetsController.show')
