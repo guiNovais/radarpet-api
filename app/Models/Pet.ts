@@ -1,6 +1,8 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
 import { Situacao } from './Situacao'
+import { Especie } from './Especie'
+import { Cor } from './Cor'
 
 export default class Pet extends BaseModel {
   @column({ isPrimary: true })
@@ -16,10 +18,10 @@ export default class Pet extends BaseModel {
   public nome: string
 
   @column()
-  public especie: string
+  public especie: Especie
 
   @column()
-  public cor: string
+  public cor: Cor
 
   @column()
   public situacao: Situacao
