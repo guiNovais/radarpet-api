@@ -50,4 +50,9 @@ export default class PetsController {
 
     return await pet.save()
   }
+
+  public async destroy({ request }) {
+    const pet = await Pet.findOrFail(request.routeParams.id)
+    return pet.delete()
+  }
 }
