@@ -19,7 +19,11 @@ export default class PetsController {
   }
 
   public async show({ request }) {
-    return await Pet.findOrFail(request.routeParams.id)
+    return await Pet.query()
+      .select()
+      .where('id', request.routeParams.id)
+      .preload('vistoEm')
+      .firstOrFail()
   }
 
   public async store({ request }) {
