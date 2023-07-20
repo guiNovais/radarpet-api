@@ -14,9 +14,9 @@ export default class extends BaseSchema {
       table.timestamp('updated_at', { useTz: true })
 
       table.string('nome')
-      table.string('especie')
-      table.string('cor')
-      table.string('situacao')
+      table.string('especie') // TODO usar table.enum
+      table.string('cor') // TODO usar table.enum
+      table.string('situacao') // TODO usar table.enum
       table.string('comentario')
       table.timestamp('visto_as')
     })
