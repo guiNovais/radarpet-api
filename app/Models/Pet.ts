@@ -31,4 +31,6 @@ export default class Pet extends BaseModel {
 
   @column.dateTime({ serializeAs: 'vistoAs' })
   public vistoAs: DateTime
+
+  public vistoEm: unknown
 }
