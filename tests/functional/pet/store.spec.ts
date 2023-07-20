@@ -14,6 +14,7 @@ test.group('Pet store', () => {
     assert.equal(response.body().cor, pet.cor)
     assert.equal(response.body().situacao, pet.situacao)
     assert.equal(response.body().vistoAs, pet.vistoAs.toISO())
+    assert.equal(response.body().vistoEm, pet.vistoEm)
 
     const persistido = await Pet.findOrFail(response.body()['id'])
     assert.equal(persistido.nome, pet.nome)
@@ -21,6 +22,7 @@ test.group('Pet store', () => {
     assert.equal(persistido.cor, pet.cor)
     assert.equal(persistido.situacao, pet.situacao)
     assert.equal(persistido.vistoAs.toISO(), pet.vistoAs.toISO())
+    assert.equal(persistido.vistoEm, pet.vistoEm)
   })
 
   test('exigir parâmetros obrigatórios ao armazenar um pet', async ({ client }) => {
@@ -32,6 +34,7 @@ test.group('Pet store', () => {
         { rule: 'required', field: 'especie', message: 'required validation failed' },
         { rule: 'required', field: 'cor', message: 'required validation failed' },
         { rule: 'required', field: 'vistoAs', message: 'required validation failed' },
+        { rule: 'required', field: 'coordenadas', message: 'required validation failed' },
       ],
     })
   })

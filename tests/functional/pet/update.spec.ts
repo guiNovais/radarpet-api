@@ -15,6 +15,7 @@ test.group('Pet update', () => {
     assert.equal(response.body()['situacao'], novo.situacao)
     assert.equal(response.body()['comentario'], novo.comentario)
     assert.equal(response.body()['vistoAs'], novo.vistoAs.toISO())
+    assert.equal(response.body()['vistoEm'], novo.vistoEm)
 
     const persistido = await Pet.findOrFail(antigo.id)
     assert.equal(persistido.nome, novo.nome)
@@ -23,6 +24,7 @@ test.group('Pet update', () => {
     assert.equal(persistido.situacao, novo.situacao)
     assert.equal(persistido.comentario, novo.comentario)
     assert.equal(persistido.vistoAs.toISO(), novo.vistoAs.toISO())
+    assert.equal(persistido.vistoEm, novo.vistoEm)
   })
 
   test('atualizar cada parâmetro de pet individualmente', async ({ client, assert }) => {
@@ -39,6 +41,7 @@ test.group('Pet update', () => {
     assert.equal(persistido.situacao, antigo.situacao)
     assert.equal(persistido.comentario, antigo.comentario)
     assert.equal(persistido.vistoAs.toISO(), antigo.vistoAs.toISO())
+    assert.equal(persistido.vistoEm, antigo.vistoEm)
 
     response = await client.patch(`/pets/${antigo.id}`).json({ especie: novo.especie })
     persistido = await Pet.findOrFail(antigo.id)
@@ -50,6 +53,7 @@ test.group('Pet update', () => {
     assert.equal(persistido.situacao, antigo.situacao)
     assert.equal(persistido.comentario, antigo.comentario)
     assert.equal(persistido.vistoAs.toISO(), antigo.vistoAs.toISO())
+    assert.equal(persistido.vistoEm, antigo.vistoEm)
 
     response = await client.patch(`/pets/${antigo.id}`).json({ cor: novo.cor })
     persistido = await Pet.findOrFail(antigo.id)
@@ -61,6 +65,7 @@ test.group('Pet update', () => {
     assert.equal(persistido.situacao, antigo.situacao)
     assert.equal(persistido.comentario, antigo.comentario)
     assert.equal(persistido.vistoAs.toISO(), antigo.vistoAs.toISO())
+    assert.equal(persistido.vistoEm, antigo.vistoEm)
 
     response = await client.patch(`/pets/${antigo.id}`).json({ situacao: novo.situacao })
     persistido = await Pet.findOrFail(antigo.id)
@@ -72,6 +77,7 @@ test.group('Pet update', () => {
     assert.equal(persistido.situacao, novo.situacao)
     assert.equal(persistido.comentario, antigo.comentario)
     assert.equal(persistido.vistoAs.toISO(), antigo.vistoAs.toISO())
+    assert.equal(persistido.vistoEm, antigo.vistoEm)
 
     response = await client.patch(`/pets/${antigo.id}`).json({ comentario: novo.comentario })
     persistido = await Pet.findOrFail(antigo.id)
@@ -83,6 +89,7 @@ test.group('Pet update', () => {
     assert.equal(persistido.situacao, novo.situacao)
     assert.equal(persistido.comentario, novo.comentario)
     assert.equal(persistido.vistoAs.toISO(), antigo.vistoAs.toISO())
+    assert.equal(persistido.vistoEm, antigo.vistoEm)
 
     response = await client.patch(`/pets/${antigo.id}`).json({ vistoAs: novo.vistoAs })
     persistido = await Pet.findOrFail(antigo.id)
@@ -94,6 +101,19 @@ test.group('Pet update', () => {
     assert.equal(persistido.situacao, novo.situacao)
     assert.equal(persistido.comentario, novo.comentario)
     assert.equal(persistido.vistoAs.toISO(), novo.vistoAs.toISO())
+    assert.equal(persistido.vistoEm, antigo.vistoEm)
+
+    response = await client.patch(`/pets/${antigo.id}`).json({ vistoEm: novo.vistoEm })
+    persistido = await Pet.findOrFail(antigo.id)
+    response.assertStatus(200)
+    assert.equal(response.body()['vistoEm'], novo.vistoEm)
+    assert.equal(persistido.nome, novo.nome)
+    assert.equal(persistido.especie, novo.especie)
+    assert.equal(persistido.cor, novo.cor)
+    assert.equal(persistido.situacao, novo.situacao)
+    assert.equal(persistido.comentario, novo.comentario)
+    assert.equal(persistido.vistoAs.toISO(), novo.vistoAs.toISO())
+    assert.equal(persistido.vistoEm, novo.vistoEm)
   })
 
   test('exigir que os parâmetros enumerados sejam válidos', async ({ client }) => {
