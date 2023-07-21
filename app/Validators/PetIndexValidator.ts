@@ -24,8 +24,8 @@ export default class PetIndexValidator {
    *    ```
    */
   public schema = schema.create({
-    latitude: schema.string([rules.required(), rules.latitude()]),
-    longitude: schema.string([rules.required(), rules.longitude()]),
+    latitude: schema.number([rules.required(), rules.range(-90, 90)]),
+    longitude: schema.number([rules.required(), rules.range(-180, 180)]),
   })
 
   /**

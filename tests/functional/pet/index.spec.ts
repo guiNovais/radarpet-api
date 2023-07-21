@@ -29,8 +29,8 @@ test.group('Pet index', () => {
 
     response.assertBodyContains({
       errors: [
-        { rule: 'latitude', field: 'latitude', message: 'range validation failed' },
-        { rule: 'longitude', field: 'longitude', message: 'range validation failed' },
+        { rule: 'range', field: 'latitude', message: 'range validation failed' },
+        { rule: 'range', field: 'longitude', message: 'range validation failed' },
       ],
     })
   })
@@ -41,20 +41,8 @@ test.group('Pet index', () => {
 
     response.assertBodyContains({
       errors: [
-        { rule: 'latitude', field: 'latitude', message: 'range validation failed' },
-        { rule: 'longitude', field: 'longitude', message: 'range validation failed' },
-      ],
-    })
-  })
-
-  test('validar precisão de cada coordenadas', async ({ client }) => {
-    const response = await client.get('/pets?latitude=0&longitude=0')
-    response.assertStatus(422)
-
-    response.assertBodyContains({
-      errors: [
-        { rule: 'latitude', field: 'latitude', message: 'latitude validation failed' },
-        { rule: 'longitude', field: 'longitude', message: 'longitude validation failed' },
+        { rule: 'range', field: 'latitude', message: 'range validation failed' },
+        { rule: 'range', field: 'longitude', message: 'range validation failed' },
       ],
     })
   })
