@@ -20,11 +20,9 @@ export default class PetsController {
   }
 
   public async show({ request }) {
-    return await Pet.query()
-      .select()
-      .where('id', request.routeParams.id)
-      .preload('vistoEm')
-      .firstOrFail()
+    const pet = await Pet.findOrFail(request.routeParams.id)
+    await pet.load('vistoEm')
+    return pet
   }
 
   public async store({ request }) {
@@ -37,14 +35,15 @@ export default class PetsController {
       situacao: request.body()['situacao'],
       comentario: request.body()['comentario'],
       vistoAs: DateTime.fromISO(request.body()['vistoAs']),
-    }) as any
+    })
     await pet.save()
 
     const vistoEm = new Coordenada()
     vistoEm.latitude = request.body().vistoEm.latitude
     vistoEm.longitude = request.body().vistoEm.longitude
     vistoEm.petId = pet.id
-    pet.vistoEm = await vistoEm.save()
+    await vistoEm.save()
+    await pet.load('vistoEm')
 
     return pet
   }
