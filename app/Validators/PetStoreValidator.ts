@@ -34,8 +34,8 @@ export default class PetStoreValidator {
     comentario: schema.string.optional([rules.maxLength(280)]),
     vistoAs: schema.date(),
     vistoEm: schema.object().members({
-      latitude: schema.number([rules.required(), rules.latitude()]),
-      longitude: schema.number([rules.required(), rules.longitude()]),
+      latitude: schema.number([rules.required(), rules.range(-90, 90)]),
+      longitude: schema.number([rules.required(), rules.range(-180, 180)]),
     }),
   })
 
