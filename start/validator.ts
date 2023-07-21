@@ -53,7 +53,7 @@ validator.rule('longitude', (value, _, options) => {
 
   const longitude = parseFloat(value)
 
-  if (longitude > 90 || longitude < -90) {
+  if (value > 180 || value < -180) {
     options.errorReporter.report(
       options.pointer,
       'longitude',
