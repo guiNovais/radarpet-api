@@ -10,23 +10,11 @@
 import { validator } from '@ioc:Adonis/Core/Validator'
 
 validator.rule('latitude', (value, _, options) => {
-  if (typeof value !== 'string') {
+  if (typeof value !== 'number') {
     return
   }
 
-  if (!value.match(/^-?\d{1,3}\.\d{6}$/)) {
-    options.errorReporter.report(
-      options.pointer,
-      'latitude',
-      'latitude validation failed',
-      options.arrayExpressionPointer
-    )
-    return
-  }
-
-  const latitude = parseFloat(value)
-
-  if (latitude > 90 || latitude < -90) {
+  if (value > 90 || value < -90) {
     options.errorReporter.report(
       options.pointer,
       'latitude',
@@ -37,22 +25,9 @@ validator.rule('latitude', (value, _, options) => {
 })
 
 validator.rule('longitude', (value, _, options) => {
-  if (typeof value !== 'string') {
+  if (typeof value !== 'number') {
     return
   }
-
-  if (!value.match(/^-?\d{1,3}\.\d{6}$/)) {
-    options.errorReporter.report(
-      options.pointer,
-      'longitude',
-      'longitude validation failed',
-      options.arrayExpressionPointer
-    )
-    return
-  }
-
-  const longitude = parseFloat(value)
-
   if (value > 180 || value < -180) {
     options.errorReporter.report(
       options.pointer,
