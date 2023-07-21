@@ -1,4 +1,7 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
+import { Cor } from 'App/Models/Cor'
+import { Especie } from 'App/Models/Especie'
+import { Situacao } from 'App/Models/Situacao'
 
 export default class extends BaseSchema {
   protected tableName = 'pets'
@@ -14,9 +17,9 @@ export default class extends BaseSchema {
       table.timestamp('updated_at', { useTz: true })
 
       table.string('nome')
-      table.string('especie') // TODO usar table.enum
-      table.string('cor') // TODO usar table.enum
-      table.string('situacao') // TODO usar table.enum
+      table.enum('especie', Object.values(Especie))
+      table.enum('cor', Object.values(Cor))
+      table.enum('situacao', Object.values(Situacao))
       table.string('comentario')
       table.timestamp('visto_as')
     })
