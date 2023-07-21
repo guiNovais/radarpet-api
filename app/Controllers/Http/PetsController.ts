@@ -6,6 +6,7 @@ import PetIndexValidator from 'App/Validators/PetIndexValidator'
 import { DateTime } from 'luxon'
 import PetStoreValidator from 'App/Validators/PetStoreValidator'
 import PetUpdateValidator from 'App/Validators/PetUpdateValidator'
+import Coordenada from 'App/Models/Coordenada'
 
 export default class PetsController {
   public async index({ request }) {
@@ -36,7 +37,15 @@ export default class PetsController {
       comentario: request.body()['comentario'],
       vistoAs: DateTime.fromISO(request.body()['vistoAs']),
     })
-    return await pet.save()
+    let result = (await pet.save()).toJSON() as any
+
+    const vistoEm = new Coordenada()
+    vistoEm.latitude = request.body().vistoEm.latitude
+    vistoEm.longitude = request.body().vistoEm.longitude
+    vistoEm.petId = pet.id
+    result.vistoEm = (await vistoEm.save()).toJSON()
+
+    return result
   }
 
   public async update({ request }) {
