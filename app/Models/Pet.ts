@@ -35,4 +35,6 @@ export default class Pet extends BaseModel {
 
   @hasOne(() => Coordenada, { serializeAs: 'vistoEm' })
   public vistoEm: HasOne<typeof Coordenada>
+
+  public usuarioId: any
 }
