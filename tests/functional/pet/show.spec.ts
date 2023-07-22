@@ -27,4 +27,6 @@ test.group('Pet show', () => {
     assert.equal(response.body()['vistoEm']['latitude'], coordenadas.latitude)
     assert.equal(response.body()['vistoEm']['longitude'], coordenadas.longitude)
   })
+
+  // TODO teste falhar caso um pet não for encontrado
 })
