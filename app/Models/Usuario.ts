@@ -11,9 +11,12 @@ export default class Usuario extends BaseModel {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
 
-  public nome: any
+  @column()
+  public nome: string
 
-  public telefone: any
+  @column()
+  public email: string
 
-  public email: any
+  @column()
+  public telefone: string
 }
