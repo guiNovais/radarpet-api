@@ -37,6 +37,7 @@ export default class PetStoreValidator {
       latitude: schema.number([rules.required(), rules.range(-90, 90)]),
       longitude: schema.number([rules.required(), rules.range(-180, 180)]),
     }),
+    usuarioId: schema.number([rules.required()]),
   })
 
   /**

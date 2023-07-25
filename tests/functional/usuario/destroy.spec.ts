@@ -1,5 +1,7 @@
 import { test } from '@japa/runner'
+import Pet from 'App/Models/Pet'
 import Usuario from 'App/Models/Usuario'
+import PetFactory from 'Database/factories/PetFactory'
 import UsuarioFactory from 'Database/factories/UsuarioFactory'
 
 test.group('Usuario destroy', () => {
@@ -16,5 +18,12 @@ test.group('Usuario destroy', () => {
     response.assertStatus(404)
   })
 
-  test('remover os dados de pets ao remover um usuário')
+  test('remover os dados de pets ao remover um usuário', async ({ client, assert }) => {
+    const usuario = await UsuarioFactory.create()
+    const pet = await PetFactory.merge({ usuarioId: usuario.id }).create()
+
+    const response = await client.delete(`/pets/${pet.id}`)
+    response.assertStatus(200)
+    assert.isNull(await Pet.findBy('usuarioId', usuario.id))
+  })
 })
