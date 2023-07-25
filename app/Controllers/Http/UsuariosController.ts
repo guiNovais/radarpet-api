@@ -25,4 +25,9 @@ export default class UsuariosController {
 
     return usuario.save()
   }
+
+  public async destroy({ request }) {
+    const usuario = await Usuario.findOrFail(request.routeParams.id)
+    return usuario.delete()
+  }
 }
