@@ -31,8 +31,12 @@ export default class PetStoreValidator {
     especie: schema.enum(Object.values(Especie)),
     cor: schema.enum(Object.values(Cor)),
     situacao: schema.enum(Object.values(Situacao)),
-    vistoAs: schema.date(),
     comentario: schema.string.optional([rules.maxLength(280)]),
+    vistoAs: schema.date(),
+    vistoEm: schema.object().members({
+      latitude: schema.number([rules.required(), rules.range(-90, 90)]),
+      longitude: schema.number([rules.required(), rules.range(-180, 180)]),
+    }),
   })
 
   /**

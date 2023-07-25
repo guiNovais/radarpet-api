@@ -6,6 +6,7 @@ import PetIndexValidator from 'App/Validators/PetIndexValidator'
 import { DateTime } from 'luxon'
 import PetStoreValidator from 'App/Validators/PetStoreValidator'
 import PetUpdateValidator from 'App/Validators/PetUpdateValidator'
+import Coordenada from 'App/Models/Coordenada'
 
 export default class PetsController {
   public async index({ request }) {
@@ -19,11 +20,14 @@ export default class PetsController {
   }
 
   public async show({ request }) {
-    return await Pet.findOrFail(request.routeParams.id)
+    const pet = await Pet.findOrFail(request.routeParams.id)
+    await pet.load('vistoEm')
+    return pet
   }
 
   public async store({ request }) {
     await request.validate(PetStoreValidator)
+
     const pet = new Pet().fill({
       nome: request.body()['nome'],
       especie: request.body()['especie'],
@@ -32,14 +36,22 @@ export default class PetsController {
       comentario: request.body()['comentario'],
       vistoAs: DateTime.fromISO(request.body()['vistoAs']),
     })
-    return await pet.save()
+    await pet.save()
+
+    const vistoEm = new Coordenada()
+    vistoEm.latitude = request.body().vistoEm.latitude
+    vistoEm.longitude = request.body().vistoEm.longitude
+    vistoEm.petId = pet.id
+    await vistoEm.save()
+    await pet.load('vistoEm')
+
+    return pet
   }
 
   public async update({ request }) {
     await request.validate(PetUpdateValidator)
-    const pet = await Pet.findOrFail(request.routeParams.id)
-    if (request.body()['vistoAs']) pet.vistoAs = DateTime.fromISO(request.body()['vistoAs'])
 
+    const pet = await Pet.findOrFail(request.routeParams.id)
     pet.merge({
       nome: request.body()['nome'],
       especie: request.body()['especie'],
@@ -47,8 +59,21 @@ export default class PetsController {
       situacao: request.body()['situacao'],
       comentario: request.body()['comentario'],
     })
+    if (request.body()['vistoAs']) pet.vistoAs = DateTime.fromISO(request.body()['vistoAs'])
+    await pet.save()
 
-    return await pet.save()
+    if (request.body()['vistoEm']) {
+      const antigo = await Coordenada.findByOrFail('petId', pet.id)
+      await antigo.delete()
+      await Coordenada.create({
+        latitude: request.body()['vistoEm'].latitude,
+        longitude: request.body()['vistoEm'].longitude,
+        petId: pet.id,
+      })
+      await pet.load('vistoEm')
+    }
+
+    return pet
   }
 
   public async destroy({ request }) {

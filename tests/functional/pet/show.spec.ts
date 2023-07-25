@@ -1,9 +1,11 @@
 import { test } from '@japa/runner'
-import Pet from 'App/Models/Pet'
+import CoordenadaFactory from 'Database/factories/CoordenadaFactory'
+import PetFactory from 'Database/factories/PetFactory'
 
 test.group('Pet show', () => {
   test('recuperar todas as informações de um pet', async ({ client, assert }) => {
-    const pet = await Pet.firstOrFail()
+    const pet = await PetFactory.create()
+    const coordenadas = await CoordenadaFactory.merge({ petId: pet.id }).create()
     const response = await client.get(`/pets/${pet.id}`)
 
     response.assertStatus(200)
@@ -13,6 +15,7 @@ test.group('Pet show', () => {
     assert.exists(response.body()['cor'])
     assert.exists(response.body()['situacao'])
     assert.exists(response.body()['vistoAs'])
+    assert.exists(response.body()['vistoEm'])
 
     assert.equal(response.body()['id'], pet.id)
     assert.equal(response.body()['nome'], pet.nome)
@@ -21,5 +24,7 @@ test.group('Pet show', () => {
     assert.equal(response.body()['situacao'], pet.situacao)
     assert.equal(response.body()['comentario'], pet.comentario)
     assert.equal(response.body()['vistoAs'], pet.vistoAs.toISO())
+    assert.equal(response.body()['vistoEm']['latitude'], coordenadas.latitude)
+    assert.equal(response.body()['vistoEm']['longitude'], coordenadas.longitude)
   })
 })

@@ -1,11 +1,14 @@
 import { test } from '@japa/runner'
+import Coordenada from 'App/Models/Coordenada'
 
 import Pet from 'App/Models/Pet'
+import CoordenadaFactory from 'Database/factories/CoordenadaFactory'
 import PetFactory from 'Database/factories/PetFactory'
 
 test.group('Pet store', () => {
   test('armazenar um pet com sucesso', async ({ client, assert }) => {
-    const pet = await PetFactory.merge({ id: undefined }).make()
+    const pet = (await PetFactory.merge({ id: undefined }).make()).toJSON()
+    pet.vistoEm = (await CoordenadaFactory.merge({ petId: undefined }).make()).toJSON()
 
     const response = await client.post('/pets').json(pet)
     response.assertStatus(200)
@@ -13,14 +16,19 @@ test.group('Pet store', () => {
     assert.equal(response.body().especie, pet.especie)
     assert.equal(response.body().cor, pet.cor)
     assert.equal(response.body().situacao, pet.situacao)
-    assert.equal(response.body().vistoAs, pet.vistoAs.toISO())
+    assert.equal(response.body().vistoAs, pet.vistoAs)
+    assert.equal(response.body().vistoEm.latitude, pet.vistoEm.latitude)
+    assert.equal(response.body().vistoEm.longitude, pet.vistoEm.longitude)
 
-    const persistido = await Pet.findOrFail(response.body()['id'])
-    assert.equal(persistido.nome, pet.nome)
-    assert.equal(persistido.especie, pet.especie)
-    assert.equal(persistido.cor, pet.cor)
-    assert.equal(persistido.situacao, pet.situacao)
-    assert.equal(persistido.vistoAs.toISO(), pet.vistoAs.toISO())
+    const petPersistido = await Pet.findOrFail(response.body()['id'])
+    const coordenadasPersistidas = await Coordenada.findByOrFail('petId', response.body()['id'])
+    assert.equal(petPersistido.nome, pet.nome)
+    assert.equal(petPersistido.especie, pet.especie)
+    assert.equal(petPersistido.cor, pet.cor)
+    assert.equal(petPersistido.situacao, pet.situacao)
+    assert.equal(petPersistido.vistoAs.toISO(), pet.vistoAs)
+    assert.equal(coordenadasPersistidas.latitude, pet.vistoEm.latitude)
+    assert.equal(coordenadasPersistidas.longitude, pet.vistoEm.longitude)
   })
 
   test('exigir parâmetros obrigatórios ao armazenar um pet', async ({ client }) => {
@@ -32,6 +40,7 @@ test.group('Pet store', () => {
         { rule: 'required', field: 'especie', message: 'required validation failed' },
         { rule: 'required', field: 'cor', message: 'required validation failed' },
         { rule: 'required', field: 'vistoAs', message: 'required validation failed' },
+        { rule: 'required', field: 'vistoEm', message: 'required validation failed' },
       ],
     })
   })
@@ -96,7 +105,9 @@ test.group('Pet store', () => {
     })
 
     test('permitir comentário vazio', async ({ client }) => {
-      const pet = await PetFactory.make()
+      const coordenadas = (await CoordenadaFactory.make()).toJSON()
+      const pet = (await PetFactory.make()).toJSON()
+      pet.vistoEm = coordenadas
       delete pet.comentario
       const response = await client.post('pets').json(pet)
       response.assertStatus(200)
