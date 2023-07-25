@@ -22,6 +22,7 @@ export default class extends BaseSchema {
       table.enum('situacao', Object.values(Situacao))
       table.string('comentario')
       table.timestamp('visto_as')
+      table.integer('usuario_id').unique().unsigned().references('usuarios.id').onDelete('CASCADE')
     })
   }
 

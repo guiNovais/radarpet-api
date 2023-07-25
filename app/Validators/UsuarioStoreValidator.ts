@@ -1,10 +1,7 @@
 import { schema, rules, CustomMessages } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
-import { Especie } from 'App/Models/Especie'
-import { Cor } from 'App/Models/Cor'
-import { Situacao } from 'App/Models/Situacao'
 
-export default class PetStoreValidator {
+export default class UsuarioStoreValidator {
   constructor(protected ctx: HttpContextContract) {}
 
   /*
@@ -28,16 +25,8 @@ export default class PetStoreValidator {
    */
   public schema = schema.create({
     nome: schema.string([rules.required(), rules.maxLength(25)]),
-    especie: schema.enum(Object.values(Especie)),
-    cor: schema.enum(Object.values(Cor)),
-    situacao: schema.enum(Object.values(Situacao)),
-    comentario: schema.string.optional([rules.maxLength(280)]),
-    vistoAs: schema.date(),
-    vistoEm: schema.object().members({
-      latitude: schema.number([rules.required(), rules.range(-90, 90)]),
-      longitude: schema.number([rules.required(), rules.range(-180, 180)]),
-    }),
-    usuarioId: schema.number([rules.required()]),
+    email: schema.string([rules.required(), rules.email()]),
+    telefone: schema.string([rules.required(), rules.regex(/\(\d{2}\) 9\d{4}-\d{4}/)]),
   })
 
   /**
