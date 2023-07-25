@@ -4,6 +4,7 @@ import { Situacao } from './Situacao'
 import { Especie } from './Especie'
 import { Cor } from './Cor'
 import Coordenada from './Coordenada'
+import Usuario from './Usuario'
 
 export default class Pet extends BaseModel {
   @column({ isPrimary: true })
@@ -36,5 +37,9 @@ export default class Pet extends BaseModel {
   @hasOne(() => Coordenada, { serializeAs: 'vistoEm' })
   public vistoEm: HasOne<typeof Coordenada>
 
-  public usuarioId: any
+  @hasOne(() => Usuario)
+  public usuario: HasOne<typeof Usuario>
+
+  @column({ serializeAs: 'usuarioId' })
+  public usuarioId: number
 }

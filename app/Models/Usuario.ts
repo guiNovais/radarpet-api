@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, HasMany, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import Pet from './Pet'
 
 export default class Usuario extends BaseModel {
   @column({ isPrimary: true })
@@ -19,4 +20,7 @@ export default class Usuario extends BaseModel {
 
   @column()
   public telefone: string
+
+  @hasMany(() => Pet)
+  public pet: HasMany<typeof Pet>
 }

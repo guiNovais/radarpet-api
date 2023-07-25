@@ -9,7 +9,7 @@ import UsuarioFactory from 'Database/factories/UsuarioFactory'
 
 test.group('Pet store', () => {
   test('armazenar um pet com sucesso', async ({ client, assert }) => {
-    const usuario = await UsuarioFactory.create()
+    const usuario = (await UsuarioFactory.create()).toJSON()
     const pet = (await PetFactory.merge({ id: undefined, usuarioId: usuario.id }).make()).toJSON()
     pet.vistoEm = (await CoordenadaFactory.merge({ petId: undefined }).make()).toJSON()
 
@@ -113,14 +113,15 @@ test.group('Pet store', () => {
       message: 'maxLength validation failed',
       args: { maxLength: 280 },
     })
+  })
 
-    test('permitir comentário vazio', async ({ client }) => {
-      const coordenadas = (await CoordenadaFactory.make()).toJSON()
-      const pet = (await PetFactory.make()).toJSON()
-      pet.vistoEm = coordenadas
-      delete pet.comentario
-      const response = await client.post('pets').json(pet)
-      response.assertStatus(200)
-    })
+  test('permitir comentário vazio', async ({ client }) => {
+    const usuario = (await UsuarioFactory.create()).toJSON()
+    const coordenadas = (await CoordenadaFactory.make()).toJSON()
+    const pet = (await PetFactory.merge({ usuarioId: usuario.id }).make()).toJSON()
+    pet.vistoEm = coordenadas
+    delete pet.comentario
+    const response = await client.post('pets').json(pet)
+    response.assertStatus(200)
   })
 })
