@@ -31,3 +31,4 @@ Route.patch('/pets/:id', 'PetsController.update')
 Route.delete('/pets/:id', 'PetsController.destroy')
 
 Route.get('/usuarios/:id', 'UsuariosController.show')
+Route.post('/usuarios', 'UsuariosController.store')
