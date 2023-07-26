@@ -1,5 +1,4 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
-import { Cor } from 'App/Models/Cor'
 import { Especie } from 'App/Models/Especie'
 import { Situacao } from 'App/Models/Situacao'
 
@@ -18,7 +17,6 @@ export default class extends BaseSchema {
 
       table.string('nome')
       table.enum('especie', Object.values(Especie))
-      table.enum('cor', Object.values(Cor))
       table.enum('situacao', Object.values(Situacao))
       table.string('comentario')
       table.timestamp('visto_as')

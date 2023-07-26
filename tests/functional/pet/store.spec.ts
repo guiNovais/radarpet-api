@@ -1,6 +1,5 @@
 import { test } from '@japa/runner'
 import Coordenada from 'App/Models/Coordenada'
-import { Cor } from 'App/Models/Cor'
 
 import Pet from 'App/Models/Pet'
 import Usuario from 'App/Models/Usuario'
@@ -30,7 +29,6 @@ test.group('Pet store', () => {
     const usuarioPersistido = await Usuario.findOrFail(usuario.id)
     assert.equal(petPersistido.nome, pet.nome)
     assert.equal(petPersistido.especie, pet.especie)
-    assert.equal(petPersistido.cor, pet.cor)
     assert.equal(petPersistido.situacao, pet.situacao)
     assert.equal(petPersistido.usuarioId, usuario.id)
     assert.equal(petPersistido.vistoAs.toISO(), pet.vistoAs)
@@ -48,7 +46,6 @@ test.group('Pet store', () => {
       errors: [
         { rule: 'required', field: 'nome', message: 'required validation failed' },
         { rule: 'required', field: 'especie', message: 'required validation failed' },
-        { rule: 'required', field: 'cor', message: 'required validation failed' },
         { rule: 'required', field: 'vistoAs', message: 'required validation failed' },
         { rule: 'required', field: 'vistoEm', message: 'required validation failed' },
         { rule: 'required', field: 'usuarioId', message: 'required validation failed' },
@@ -59,7 +56,6 @@ test.group('Pet store', () => {
   test('exigir que os parâmetros enumerados sejam válidos', async ({ client }) => {
     const response = await client.post('/pets').json(
       await PetFactory.merge({
-        cor: 'foo',
         especie: 'bar',
         situacao: 'baz',
       } as any).make()
@@ -71,11 +67,6 @@ test.group('Pet store', () => {
         {
           rule: 'enum',
           field: 'especie',
-          message: 'enum validation failed',
-        },
-        {
-          rule: 'enum',
-          field: 'cor',
           message: 'enum validation failed',
         },
         {
@@ -132,7 +123,7 @@ test.group('Pet store', () => {
       await PetFactory.merge({
         id: undefined,
         usuarioId: usuario.id,
-        cores: [Cor.Preto, Cor.Branco],
+        cores: ['Preto', 'Branco'],
       } as any).make()
     ).toJSON()
     pet.vistoEm = (await CoordenadaFactory.merge({ petId: undefined }).make()).toJSON()
