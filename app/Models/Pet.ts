@@ -1,9 +1,8 @@
-import { DateTime } from 'luxon'
 import { BaseModel, HasOne, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
-import { Situacao } from './Situacao'
-import { Especie } from './Especie'
-import { Cor } from './Cor'
+import { DateTime } from 'luxon'
 import Coordenada from './Coordenada'
+import { Especie } from './Especie'
+import { Situacao } from './Situacao'
 import Usuario from './Usuario'
 
 export default class Pet extends BaseModel {
@@ -21,9 +20,6 @@ export default class Pet extends BaseModel {
 
   @column()
   public especie: Especie
-
-  @column()
-  public cor: Cor
 
   @column()
   public situacao: Situacao
