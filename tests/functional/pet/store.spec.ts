@@ -1,5 +1,6 @@
 import { test } from '@japa/runner'
 import Coordenada from 'App/Models/Coordenada'
+import { Cor } from 'App/Models/Cor'
 
 import Pet from 'App/Models/Pet'
 import Usuario from 'App/Models/Usuario'
@@ -122,6 +123,21 @@ test.group('Pet store', () => {
     pet.vistoEm = coordenadas
     delete pet.comentario
     const response = await client.post('pets').json(pet)
+    response.assertStatus(200)
+  })
+
+  test('permitir pet com várias cores', async ({ client }) => {
+    const usuario = (await UsuarioFactory.create()).toJSON()
+    const pet = (
+      await PetFactory.merge({
+        id: undefined,
+        usuarioId: usuario.id,
+        cores: [Cor.Preto, Cor.Branco],
+      } as any).make()
+    ).toJSON()
+    pet.vistoEm = (await CoordenadaFactory.merge({ petId: undefined }).make()).toJSON()
+
+    const response = await client.post('/pets').json(pet)
     response.assertStatus(200)
   })
 })
