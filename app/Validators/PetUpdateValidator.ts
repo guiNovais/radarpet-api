@@ -1,7 +1,6 @@
 import { schema, rules, CustomMessages } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { Especie } from 'App/Models/Especie'
-import { Cor } from 'App/Models/Cor'
 import { Situacao } from 'App/Models/Situacao'
 
 export default class PetUpdateValidator {
@@ -29,7 +28,6 @@ export default class PetUpdateValidator {
   public schema = schema.create({
     nome: schema.string.optional([rules.maxLength(25)]),
     especie: schema.enum.optional(Object.values(Especie)),
-    cor: schema.enum.optional(Object.values(Cor)),
     situacao: schema.enum.optional(Object.values(Situacao)),
     vistoAs: schema.date.optional(),
     comentario: schema.string.optional([rules.maxLength(280)]),
