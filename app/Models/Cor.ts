@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, ManyToMany, column, manyToMany } from '@ioc:Adonis/Lucid/Orm'
+import Pet from './Pet'
 
 export default class Cor extends BaseModel {
   public static table = 'cores'
@@ -15,4 +16,9 @@ export default class Cor extends BaseModel {
 
   @column()
   public valor: string
+
+  @manyToMany(() => Pet, {
+    pivotTable: 'cores_pets',
+  })
+  public pets: ManyToMany<typeof Pet>
 }
