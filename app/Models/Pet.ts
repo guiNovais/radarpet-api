@@ -1,6 +1,7 @@
-import { BaseModel, HasOne, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, HasOne, ManyToMany, column, hasOne, manyToMany } from '@ioc:Adonis/Lucid/Orm'
 import { DateTime } from 'luxon'
 import Coordenada from './Coordenada'
+import Cor from './Cor'
 import { Especie } from './Especie'
 import { Situacao } from './Situacao'
 import Usuario from './Usuario'
@@ -38,4 +39,9 @@ export default class Pet extends BaseModel {
 
   @column({ serializeAs: 'usuarioId' })
   public usuarioId: number
+
+  @manyToMany(() => Cor, {
+    pivotTable: 'cores_pets',
+  })
+  public cores: ManyToMany<typeof Cor>
 }

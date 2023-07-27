@@ -1,7 +1,7 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'cores'
+  protected tableName = 'cores_pets'
 
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
@@ -13,7 +13,9 @@ export default class extends BaseSchema {
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
 
-      table.string('valor')
+      table.integer('cor_id').unsigned().references('cores.id')
+      table.integer('pet_id').unsigned().references('pets.id')
+      table.unique(['cor_id', 'pet_id'])
     })
   }
 
