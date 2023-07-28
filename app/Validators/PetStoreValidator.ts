@@ -1,8 +1,8 @@
 import { schema, rules, CustomMessages } from '@ioc:Adonis/Core/Validator'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import { Especie } from 'App/Models/Especie'
-import { Cor } from 'App/Models/Cor'
 import { Situacao } from 'App/Models/Situacao'
+import { Opcoes as Cor } from 'App/Models/Cor'
 
 export default class PetStoreValidator {
   constructor(protected ctx: HttpContextContract) {}
@@ -29,7 +29,6 @@ export default class PetStoreValidator {
   public schema = schema.create({
     nome: schema.string([rules.required(), rules.maxLength(25)]),
     especie: schema.enum(Object.values(Especie)),
-    cor: schema.enum(Object.values(Cor)),
     situacao: schema.enum(Object.values(Situacao)),
     comentario: schema.string.optional([rules.maxLength(280)]),
     vistoAs: schema.date(),
@@ -38,6 +37,7 @@ export default class PetStoreValidator {
       longitude: schema.number([rules.required(), rules.range(-180, 180)]),
     }),
     usuarioId: schema.number([rules.required()]),
+    cores: schema.array().members(schema.enum(Object.values(Cor))),
   })
 
   /**
