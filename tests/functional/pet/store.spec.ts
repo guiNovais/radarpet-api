@@ -75,18 +75,18 @@ test.group('Pet store', () => {
         { rule: 'required', field: 'vistoAs', message: 'required validation failed' },
         { rule: 'required', field: 'vistoEm', message: 'required validation failed' },
         { rule: 'required', field: 'usuarioId', message: 'required validation failed' },
+        { rule: 'required', field: 'cores', message: 'required validation failed' },
       ],
     })
   })
 
   test('exigir que os parâmetros enumerados sejam válidos', async ({ client }) => {
-    const response = await client.post('/pets').json(
-      await PetFactory.merge({
-        especie: 'bar',
-        situacao: 'baz',
-      } as any).make()
-    )
+    const pet = (await PetFactory.make()).toJSON()
+    pet.especie = 'bar'
+    pet.situacao = 'baz'
+    pet.cores = ['qux']
 
+    const response = await client.post('/pets').json(pet)
     response.assertStatus(422)
     response.assertBodyContains({
       errors: [
@@ -98,6 +98,11 @@ test.group('Pet store', () => {
         {
           rule: 'enum',
           field: 'situacao',
+          message: 'enum validation failed',
+        },
+        {
+          rule: 'enum',
+          field: 'cores.0',
           message: 'enum validation failed',
         },
       ],

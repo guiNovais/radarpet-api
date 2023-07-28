@@ -203,13 +203,12 @@ test.group('Pet update', () => {
   })
 
   test('exigir que os parâmetros enumerados sejam válidos', async ({ client }) => {
-    const pet = await PetFactory.create()
-    const response = await client.patch(`/pets/${pet.id}`).json(
-      await PetFactory.merge({
-        especie: 'bar',
-        situacao: 'baz',
-      } as any).make()
-    )
+    const pet = (await PetFactory.create()).toJSON()
+    pet.especie = 'bar'
+    pet.situacao = 'baz'
+    pet.cores = ['qux']
+
+    const response = await client.post('/pets').json(pet)
 
     response.assertStatus(422)
     response.assertBodyContains({
@@ -222,6 +221,11 @@ test.group('Pet update', () => {
         {
           rule: 'enum',
           field: 'situacao',
+          message: 'enum validation failed',
+        },
+        {
+          rule: 'enum',
+          field: 'cores.0',
           message: 'enum validation failed',
         },
       ],
