@@ -22,3 +22,15 @@ export default class Cor extends BaseModel {
   })
   public pets: ManyToMany<typeof Pet>
 }
+
+export enum Opcoes {
+  Amarelo = 'Amarelo',
+  Azul = 'Azul',
+  Branco = 'Branco',
+  Cinza = 'Cinza',
+  Laranja = 'Laranja',
+  Preto = 'Preto',
+  Roxo = 'Roxo',
+  Verde = 'Verde',
+  Vermelho = 'Vermelho',
+}
