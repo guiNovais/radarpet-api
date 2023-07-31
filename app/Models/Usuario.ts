@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, HasMany, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, HasMany, beforeSave, column, hasMany } from '@ioc:Adonis/Lucid/Orm'
 import Pet from './Pet'
+import Hash from '@ioc:Adonis/Core/Hash'
 
 export default class Usuario extends BaseModel {
   @column({ isPrimary: true })
@@ -23,4 +24,17 @@ export default class Usuario extends BaseModel {
 
   @hasMany(() => Pet)
   public pet: HasMany<typeof Pet>
+
+  @column({ serializeAs: null })
+  public password: string
+
+  @column()
+  public rememberMeToken: string | null
+
+  @beforeSave()
+  public static async hashPassword(usuario: Usuario) {
+    if (usuario.$dirty.password) {
+      usuario.password = await Hash.make(usuario.password)
+    }
+  }
 }

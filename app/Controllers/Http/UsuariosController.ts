@@ -14,9 +14,11 @@ export default class UsuariosController {
     return Usuario.create(request.body())
   }
 
-  public async update({ request }) {
+  public async update({ request, auth }) {
     await request.validate(UsuarioUpdateValidator)
-    const usuario = await Usuario.findOrFail(request.routeParams.id)
+    const usuarioAutenticado = await auth.use('api').authenticate()
+    const usuario = await Usuario.findOrFail(usuarioAutenticado.id)
+
     usuario.merge({
       nome: request.body()['nome'],
       telefone: request.body()['telefone'],
@@ -26,8 +28,9 @@ export default class UsuariosController {
     return usuario.save()
   }
 
-  public async destroy({ request }) {
-    const usuario = await Usuario.findOrFail(request.routeParams.id)
+  public async destroy({ auth }) {
+    const usuarioAutenticado = await auth.use('api').authenticate()
+    const usuario = await Usuario.findOrFail(usuarioAutenticado.id)
     return usuario.delete()
   }
 }

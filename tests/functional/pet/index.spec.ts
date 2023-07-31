@@ -1,11 +1,18 @@
+import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import Pet from 'App/Models/Pet'
 import { Situacao } from 'App/Models/Situacao'
 import PetFactory from 'Database/factories/PetFactory'
 import { DateTime } from 'luxon'
 
-test.group('Pet index', () => {
+test.group('Pet index', (group) => {
+  group.each.setup(async () => {
+    await Database.beginGlobalTransaction()
+    return () => Database.rollbackGlobalTransaction()
+  })
+
   test('recuperar todos os pets', async ({ client, assert }) => {
+    await PetFactory.merge({ situacao: Situacao.Perdido }).createMany(3)
     const response = await client.get('/pets?latitude=0.000000&longitude=0.000000')
     response.assertStatus(200)
     assert.equal(response.body().length, 3)
