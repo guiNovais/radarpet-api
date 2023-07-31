@@ -14,15 +14,15 @@ test.group('Usuario destroy', () => {
   })
 
   test('falhar caso um usuário não for encontrado', async ({ client }) => {
-    const response = await client.delete('/pets/-1')
+    const response = await client.delete('/usuarios/-1')
     response.assertStatus(404)
   })
 
   test('remover os dados de pets ao remover um usuário', async ({ client, assert }) => {
     const usuario = await UsuarioFactory.create()
-    const pet = await PetFactory.merge({ usuarioId: usuario.id }).create()
+    await PetFactory.merge({ usuarioId: usuario.id }).create()
 
-    const response = await client.delete(`/pets/${pet.id}`)
+    const response = await client.delete(`/usuarios/${usuario.id}`)
     response.assertStatus(200)
     assert.isNull(await Pet.findBy('usuarioId', usuario.id))
   })

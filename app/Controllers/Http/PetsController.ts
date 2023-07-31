@@ -27,8 +27,9 @@ export default class PetsController {
     return pet
   }
 
-  public async store({ request }) {
+  public async store({ request, auth }) {
     await request.validate(PetStoreValidator)
+    const usuario = await auth.use('api').authenticate()
 
     const pet = await new Pet()
       .fill({
@@ -37,7 +38,7 @@ export default class PetsController {
         situacao: request.body()['situacao'],
         comentario: request.body()['comentario'],
         vistoAs: DateTime.fromISO(request.body()['vistoAs']),
-        usuarioId: request.body()['usuarioId'],
+        usuarioId: usuario.id,
       })
       .save()
 
@@ -56,10 +57,13 @@ export default class PetsController {
     return pet
   }
 
-  public async update({ request }) {
+  public async update({ request, response, auth }) {
     await request.validate(PetUpdateValidator)
+    const usuario = await auth.use('api').authenticate()
 
     const pet = await Pet.findOrFail(request.routeParams.id)
+    if (pet.usuarioId !== usuario.id) return response.unauthorized()
+
     pet.merge({
       nome: request.body()['nome'],
       especie: request.body()['especie'],
@@ -92,8 +96,10 @@ export default class PetsController {
     return pet
   }
 
-  public async destroy({ request }) {
+  public async destroy({ request, response, auth }) {
+    const usuario = await auth.use('api').authenticate()
     const pet = await Pet.findOrFail(request.routeParams.id)
+    if (pet.usuarioId !== usuario.id) return response.unauthorized()
     return pet.delete()
   }
 }
