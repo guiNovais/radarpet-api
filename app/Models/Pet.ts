@@ -1,10 +1,11 @@
-import { BaseModel, HasOne, ManyToMany, column, hasOne, manyToMany } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, HasMany, HasOne, ManyToMany, column, hasMany, hasOne, manyToMany } from '@ioc:Adonis/Lucid/Orm'
 import { DateTime } from 'luxon'
 import Coordenada from './Coordenada'
 import Cor from './Cor'
 import { Especie } from './Especie'
 import { Situacao } from './Situacao'
 import Usuario from './Usuario'
+import Imagem from './Imagem'
 
 export default class Pet extends BaseModel {
   @column({ isPrimary: true })
@@ -44,4 +45,7 @@ export default class Pet extends BaseModel {
     pivotTable: 'cores_pets',
   })
   public cores: ManyToMany<typeof Cor>
+
+  @hasMany(() => Imagem)
+  public imagens: HasMany<typeof Imagem>
 }

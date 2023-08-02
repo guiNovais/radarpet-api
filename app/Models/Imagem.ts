@@ -1,5 +1,6 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, BelongsTo, belongsTo, column } from '@ioc:Adonis/Lucid/Orm'
+import Pet from './Pet'
 
 export default class Imagem extends BaseModel {
   @column({ isPrimary: true })
@@ -10,4 +11,10 @@ export default class Imagem extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
+  @column()
+  public petId: number
+
+  @belongsTo(() => Pet)
+  public pet: BelongsTo<typeof Pet>
 }

@@ -30,6 +30,8 @@ Route.post('/pets', 'PetsController.store')
 Route.patch('/pets/:id', 'PetsController.update')
 Route.delete('/pets/:id', 'PetsController.destroy')
 
+Route.post('/pets/:pet/imagens', 'ImagensController.store')
+
 Route.get('/usuarios/:id', 'UsuariosController.show')
 Route.post('/usuarios', 'UsuariosController.store')
 Route.patch('/usuarios/', 'UsuariosController.update')
