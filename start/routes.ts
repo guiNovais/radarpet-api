@@ -23,3 +23,9 @@ import Route from '@ioc:Adonis/Core/Route'
 Route.get('/', async () => {
   return { hello: 'world' }
 })
+
+Route.get('/pets', 'PetsController.index')
+Route.get('/pets/:id', 'PetsController.show')
+Route.post('/pets', 'PetsController.store')
+Route.patch('/pets/:id', 'PetsController.update')
+Route.delete('/pets/:id', 'PetsController.destroy')
