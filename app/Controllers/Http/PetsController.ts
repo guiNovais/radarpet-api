@@ -35,6 +35,7 @@ export default class PetsController {
       situacao: request.body()['situacao'],
       comentario: request.body()['comentario'],
       vistoAs: DateTime.fromISO(request.body()['vistoAs']),
+      usuarioId: request.body()['usuarioId'],
     })
     await pet.save()
 
