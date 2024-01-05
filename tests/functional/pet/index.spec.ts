@@ -11,7 +11,7 @@ test.group('Pet index', () => {
     assert.equal(response.body().length, 3)
   })
 
-  test('exigir parâmetros de coordenadas', async ({ client }) => {
+  test('exigir coordenadas como parâmetros de consulta', async ({ client }) => {
     const response = await client.get('/pets')
     response.assertStatus(422)
 
@@ -23,38 +23,26 @@ test.group('Pet index', () => {
     })
   })
 
-  test('validar valores máximos das coordenadas', async ({ client }) => {
+  test('validar valores máximos de cada coordenadas', async ({ client }) => {
     const response = await client.get('/pets?latitude=90.000001&longitude=180.000001')
     response.assertStatus(422)
 
     response.assertBodyContains({
       errors: [
-        { rule: 'latitude', field: 'latitude', message: 'range validation failed' },
-        { rule: 'longitude', field: 'longitude', message: 'range validation failed' },
+        { rule: 'range', field: 'latitude', message: 'range validation failed' },
+        { rule: 'range', field: 'longitude', message: 'range validation failed' },
       ],
     })
   })
 
-  test('validar valores mínimos das coordenadas', async ({ client }) => {
+  test('validar valores mínimos de cada coordenadas', async ({ client }) => {
     const response = await client.get('/pets?latitude=-90.000001&longitude=-180.000001')
     response.assertStatus(422)
 
     response.assertBodyContains({
       errors: [
-        { rule: 'latitude', field: 'latitude', message: 'range validation failed' },
-        { rule: 'longitude', field: 'longitude', message: 'range validation failed' },
-      ],
-    })
-  })
-
-  test('validar precisão das coordenadas', async ({ client }) => {
-    const response = await client.get('/pets?latitude=0&longitude=0')
-    response.assertStatus(422)
-
-    response.assertBodyContains({
-      errors: [
-        { rule: 'latitude', field: 'latitude', message: 'latitude validation failed' },
-        { rule: 'longitude', field: 'longitude', message: 'longitude validation failed' },
+        { rule: 'range', field: 'latitude', message: 'range validation failed' },
+        { rule: 'range', field: 'longitude', message: 'range validation failed' },
       ],
     })
   })

@@ -1,8 +1,9 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, HasOne, column, hasOne } from '@ioc:Adonis/Lucid/Orm'
 import { Situacao } from './Situacao'
 import { Especie } from './Especie'
 import { Cor } from './Cor'
+import Coordenada from './Coordenada'
 
 export default class Pet extends BaseModel {
   @column({ isPrimary: true })
@@ -31,4 +32,7 @@ export default class Pet extends BaseModel {
 
   @column.dateTime({ serializeAs: 'vistoAs' })
   public vistoAs: DateTime
+
+  @hasOne(() => Coordenada, { serializeAs: 'vistoEm' })
+  public vistoEm: HasOne<typeof Coordenada>
 }

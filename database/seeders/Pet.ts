@@ -1,4 +1,5 @@
 import BaseSeeder from '@ioc:Adonis/Lucid/Seeder'
+import Coordenada from 'App/Models/Coordenada'
 import { Cor } from 'App/Models/Cor'
 import { Especie } from 'App/Models/Especie'
 import Pet from 'App/Models/Pet'
@@ -10,6 +11,7 @@ export default class extends BaseSeeder {
     const agora = DateTime.now()
     await Pet.createMany([
       {
+        id: 1,
         nome: 'Chico',
         especie: Especie.Cachorro,
         cor: Cor.Amarelo,
@@ -19,6 +21,7 @@ export default class extends BaseSeeder {
         vistoAs: agora,
       },
       {
+        id: 2,
         nome: 'Pluto',
         especie: Especie.Cachorro,
         cor: Cor.Amarelo,
@@ -28,11 +31,29 @@ export default class extends BaseSeeder {
         vistoAs: agora,
       },
       {
+        id: 3,
         nome: 'Mingau',
         especie: Especie.Gato,
         cor: Cor.Branco,
         situacao: Situacao.Perdido,
         vistoAs: agora,
+      },
+    ])
+    await Coordenada.createMany([
+      {
+        petId: 1,
+        latitude: 0,
+        longitude: 0,
+      },
+      {
+        petId: 2,
+        latitude: 0,
+        longitude: 0,
+      },
+      {
+        petId: 3,
+        latitude: 0,
+        longitude: 0,
       },
     ])
   }
