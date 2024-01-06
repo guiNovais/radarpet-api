@@ -32,5 +32,7 @@ Route.delete('/pets/:id', 'PetsController.destroy')
 
 Route.get('/usuarios/:id', 'UsuariosController.show')
 Route.post('/usuarios', 'UsuariosController.store')
-Route.patch('/usuarios/:id', 'UsuariosController.update')
-Route.delete('/usuarios/:id', 'UsuariosController.destroy')
+Route.patch('/usuarios/', 'UsuariosController.update')
+Route.delete('/usuarios/', 'UsuariosController.destroy')
+
+Route.post('/login', 'AuthController.login')
