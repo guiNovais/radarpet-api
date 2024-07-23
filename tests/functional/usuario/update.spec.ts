@@ -1,8 +1,14 @@
+import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import Usuario from 'App/Models/Usuario'
 import UsuarioFactory from 'Database/factories/UsuarioFactory'
 
-test.group('Usuario update', () => {
+test.group('Usuario update', (group) => {
+  group.each.setup(async () => {
+    await Database.beginGlobalTransaction()
+    return () => Database.rollbackGlobalTransaction()
+  })
+
   test('atualizar todos os parâmetros de um usuário', async ({ client, assert }) => {
     const antigo = await UsuarioFactory.create()
     const novo = await UsuarioFactory.make()

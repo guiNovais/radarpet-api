@@ -1,10 +1,16 @@
+import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import Pet from 'App/Models/Pet'
 import Usuario from 'App/Models/Usuario'
 import PetFactory from 'Database/factories/PetFactory'
 import UsuarioFactory from 'Database/factories/UsuarioFactory'
 
-test.group('Usuario destroy', () => {
+test.group('Usuario destroy', (group) => {
+  group.each.setup(async () => {
+    await Database.beginGlobalTransaction()
+    return () => Database.rollbackGlobalTransaction()
+  })
+
   test('remover um usuário com sucesso', async ({ client, assert }) => {
     const usuario = await UsuarioFactory.create()
     const response = await client.delete('/usuarios').loginAs(usuario)

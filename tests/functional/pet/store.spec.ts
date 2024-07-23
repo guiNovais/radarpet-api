@@ -10,7 +10,12 @@ import PetFactory from 'Database/factories/PetFactory'
 import UsuarioFactory from 'Database/factories/UsuarioFactory'
 import { sampleSize } from 'lodash'
 
-test.group('Pet store', () => {
+test.group('Pet store', (group) => {
+  group.each.setup(async () => {
+    await Database.beginGlobalTransaction()
+    return () => Database.rollbackGlobalTransaction()
+  })
+
   test('armazenar um pet com sucesso', async ({ client, assert }) => {
     const usuario = await UsuarioFactory.create()
     const pet = (await PetFactory.merge({ id: undefined, usuarioId: usuario.id }).make()).toJSON()

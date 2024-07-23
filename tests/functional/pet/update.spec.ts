@@ -7,7 +7,12 @@ import CoordenadaFactory from 'Database/factories/CoordenadaFactory'
 import PetFactory from 'Database/factories/PetFactory'
 import UsuarioFactory from 'Database/factories/UsuarioFactory'
 
-test.group('Pet update', () => {
+test.group('Pet update', (group) => {
+  group.each.setup(async () => {
+    await Database.beginGlobalTransaction()
+    return () => Database.rollbackGlobalTransaction()
+  })
+
   test('atualizar todos os parâmetros de pet', async ({ client, assert }) => {
     const usuario = await UsuarioFactory.create()
     const antigo = (await PetFactory.merge({ usuarioId: usuario.id }).create()).toJSON()

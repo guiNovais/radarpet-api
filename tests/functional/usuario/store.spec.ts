@@ -1,8 +1,14 @@
+import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import Usuario from 'App/Models/Usuario'
 import UsuarioFactory from 'Database/factories/UsuarioFactory'
 
-test.group('Usuario store', () => {
+test.group('Usuario store', (group) => {
+  group.each.setup(async () => {
+    await Database.beginGlobalTransaction()
+    return () => Database.rollbackGlobalTransaction()
+  })
+
   test('armazenar um usuário com sucesso', async ({ client, assert }) => {
     const usuario = (await UsuarioFactory.merge({ id: undefined }).make()).toJSON()
     usuario.password = '$Wn29Q%k'

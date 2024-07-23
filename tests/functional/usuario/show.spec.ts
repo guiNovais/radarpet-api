@@ -1,7 +1,13 @@
+import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import UsuarioFactory from 'Database/factories/UsuarioFactory'
 
-test.group('Usuario show', () => {
+test.group('Usuario show', (group) => {
+  group.each.setup(async () => {
+    await Database.beginGlobalTransaction()
+    return () => Database.rollbackGlobalTransaction()
+  })
+
   test('recuperar todas as informações de um usuario', async ({ client, assert }) => {
     const usuario = await UsuarioFactory.create()
     const response = await client.get(`/usuarios/${usuario.id}`)

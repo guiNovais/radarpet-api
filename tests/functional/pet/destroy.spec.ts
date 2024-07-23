@@ -1,10 +1,16 @@
+import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import Coordenada from 'App/Models/Coordenada'
 import Pet from 'App/Models/Pet'
 import PetFactory from 'Database/factories/PetFactory'
 import UsuarioFactory from 'Database/factories/UsuarioFactory'
 
-test.group('Pet destroy', () => {
+test.group('Pet destroy', (group) => {
+  group.each.setup(async () => {
+    await Database.beginGlobalTransaction()
+    return () => Database.rollbackGlobalTransaction()
+  })
+
   test('remover um pet com sucesso', async ({ client, assert }) => {
     const usuario = await UsuarioFactory.create()
     const pet = await PetFactory.merge({ usuarioId: usuario.id }).create()

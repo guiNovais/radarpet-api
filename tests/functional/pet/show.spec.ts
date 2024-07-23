@@ -1,10 +1,17 @@
+import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import Cor from 'App/Models/Cor'
 import CoordenadaFactory from 'Database/factories/CoordenadaFactory'
 import PetFactory from 'Database/factories/PetFactory'
 import { sampleSize } from 'lodash'
+import { DateTime } from 'luxon'
 
-test.group('Pet show', () => {
+test.group('Pet show', (group) => {
+  group.each.setup(async () => {
+    await Database.beginGlobalTransaction()
+    return () => Database.rollbackGlobalTransaction()
+  })
+
   test('recuperar todas as informações de um pet', async ({ client, assert }) => {
     const pet = await PetFactory.create()
     const coordenadas = await CoordenadaFactory.merge({ petId: pet.id }).create()
@@ -27,7 +34,7 @@ test.group('Pet show', () => {
     assert.equal(response.body()['especie'], pet.especie)
     assert.equal(response.body()['situacao'], pet.situacao)
     assert.equal(response.body()['comentario'], pet.comentario)
-    assert.equal(response.body()['vistoAs'], pet.vistoAs.toISO())
+    assert.equal(DateTime.fromISO(response.body()['vistoAs']).toMillis(), pet.vistoAs.toMillis())
     assert.equal(response.body()['vistoEm']['latitude'], coordenadas.latitude)
     assert.equal(response.body()['vistoEm']['longitude'], coordenadas.longitude)
     assert.sameDeepMembers(
