@@ -5,17 +5,19 @@ import Cor from 'App/Models/Cor'
 import Pet from 'App/Models/Pet'
 import CoordenadaFactory from 'Database/factories/CoordenadaFactory'
 import PetFactory from 'Database/factories/PetFactory'
+import UsuarioFactory from 'Database/factories/UsuarioFactory'
 
 test.group('Pet update', () => {
   test('atualizar todos os parâmetros de pet', async ({ client, assert }) => {
-    const antigo = (await PetFactory.create()).toJSON()
+    const usuario = await UsuarioFactory.create()
+    const antigo = (await PetFactory.merge({ usuarioId: usuario.id }).create()).toJSON()
     const id = antigo.id
     await CoordenadaFactory.merge({ petId: antigo.id }).create()
     const novo = (await PetFactory.make()).toJSON()
     novo.vistoEm = (await CoordenadaFactory.make()).toJSON()
     novo.cores = ['Preto', 'Branco']
 
-    const response = await client.patch(`/pets/${id}`).json(novo)
+    const response = await client.patch(`/pets/${id}`).json(novo).loginAs(usuario)
 
     response.assertStatus(200)
 
@@ -59,7 +61,8 @@ test.group('Pet update', () => {
   })
 
   test('atualizar cada parâmetro de pet individualmente', async ({ client, assert }) => {
-    let antigo = await PetFactory.create()
+    const usuario = await UsuarioFactory.create()
+    let antigo = await PetFactory.merge({ usuarioId: usuario.id }).create()
     const id = antigo.id
     await CoordenadaFactory.merge({ petId: id }).create()
     await antigo.load('vistoEm')
@@ -72,7 +75,7 @@ test.group('Pet update', () => {
     novo.vistoEm = (await CoordenadaFactory.make()).toJSON()
     novo.cores = ['Laranja']
 
-    let response = await client.patch(`/pets/${id}`).json({ nome: novo.nome })
+    let response = await client.patch(`/pets/${id}`).json({ nome: novo.nome }).loginAs(usuario)
     let persistido = await Pet.findOrFail(id)
     await persistido.load('vistoEm')
     await persistido.load('cores')
@@ -90,7 +93,7 @@ test.group('Pet update', () => {
       ['Preto', 'Branco']
     )
 
-    response = await client.patch(`/pets/${id}`).json({ especie: novo.especie })
+    response = await client.patch(`/pets/${id}`).json({ especie: novo.especie }).loginAs(usuario)
     persistido = await Pet.findOrFail(id)
     await persistido.load('vistoEm')
     await persistido.load('cores')
@@ -108,7 +111,7 @@ test.group('Pet update', () => {
       ['Preto', 'Branco']
     )
 
-    response = await client.patch(`/pets/${id}`).json({ situacao: novo.situacao })
+    response = await client.patch(`/pets/${id}`).json({ situacao: novo.situacao }).loginAs(usuario)
     persistido = await Pet.findOrFail(id)
     await persistido.load('vistoEm')
     await persistido.load('cores')
@@ -126,7 +129,10 @@ test.group('Pet update', () => {
       ['Preto', 'Branco']
     )
 
-    response = await client.patch(`/pets/${id}`).json({ comentario: novo.comentario })
+    response = await client
+      .patch(`/pets/${id}`)
+      .json({ comentario: novo.comentario })
+      .loginAs(usuario)
     persistido = await Pet.findOrFail(id)
     await persistido.load('vistoEm')
     await persistido.load('cores')
@@ -144,7 +150,7 @@ test.group('Pet update', () => {
       ['Preto', 'Branco']
     )
 
-    response = await client.patch(`/pets/${id}`).json({ vistoAs: novo.vistoAs })
+    response = await client.patch(`/pets/${id}`).json({ vistoAs: novo.vistoAs }).loginAs(usuario)
     persistido = await Pet.findOrFail(id)
     await persistido.load('vistoEm')
     await persistido.load('cores')
@@ -162,7 +168,7 @@ test.group('Pet update', () => {
       ['Preto', 'Branco']
     )
 
-    response = await client.patch(`/pets/${id}`).json({ vistoEm: novo.vistoEm })
+    response = await client.patch(`/pets/${id}`).json({ vistoEm: novo.vistoEm }).loginAs(usuario)
     persistido = await Pet.findOrFail(id)
     await persistido.load('vistoEm')
     await persistido.load('cores')
@@ -180,7 +186,7 @@ test.group('Pet update', () => {
       ['Preto', 'Branco']
     )
 
-    response = await client.patch(`/pets/${id}`).json({ cores: novo.cores })
+    response = await client.patch(`/pets/${id}`).json({ cores: novo.cores }).loginAs(usuario)
     persistido = await Pet.findOrFail(id)
     await persistido.load('vistoEm')
     await persistido.load('cores')
@@ -262,8 +268,18 @@ test.group('Pet update', () => {
   })
 
   test('falhar caso um pet não for encontrado', async ({ client }) => {
+    const usuario = await UsuarioFactory.create()
     const pet = await PetFactory.make()
-    const response = await client.patch('/pets/-1').json(pet)
+    const response = await client.patch('/pets/-1').json(pet).loginAs(usuario)
     response.assertStatus(404)
+  })
+
+  test('proibir um usuário de alterar um pet de outro usuário', async ({ client }) => {
+    const fulano = await UsuarioFactory.create()
+    const cicrano = await UsuarioFactory.create()
+    const pet = await PetFactory.merge({ usuarioId: fulano.id }).create()
+
+    const response = await client.patch(`/pets/${pet.id}`).loginAs(cicrano)
+    response.assertStatus(401)
   })
 })

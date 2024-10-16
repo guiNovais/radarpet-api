@@ -12,12 +12,12 @@ import { sampleSize } from 'lodash'
 
 test.group('Pet store', () => {
   test('armazenar um pet com sucesso', async ({ client, assert }) => {
-    const usuario = (await UsuarioFactory.create()).toJSON()
+    const usuario = await UsuarioFactory.create()
     const pet = (await PetFactory.merge({ id: undefined, usuarioId: usuario.id }).make()).toJSON()
     pet.vistoEm = (await CoordenadaFactory.merge({ petId: undefined }).make()).toJSON()
     pet.cores = ['Preto', 'Branco']
 
-    const response = await client.post('/pets').json(pet)
+    const response = await client.post('/pets').json(pet).loginAs(usuario)
     response.assertStatus(200)
 
     assert.notEmpty(response.body().nome)
@@ -139,7 +139,7 @@ test.group('Pet store', () => {
   })
 
   test('permitir comentário vazio', async ({ client }) => {
-    const usuario = (await UsuarioFactory.create()).toJSON()
+    const usuario = await UsuarioFactory.create()
     const coordenadas = (await CoordenadaFactory.make()).toJSON()
     const pet = (await PetFactory.merge({ usuarioId: usuario.id }).make()).toJSON()
     const cores = sampleSize(await Cor.all()).map((cor) => cor.valor, 2)
@@ -148,12 +148,12 @@ test.group('Pet store', () => {
     pet.cores = cores
     delete pet.comentario
 
-    const response = await client.post('pets').json(pet)
+    const response = await client.post('pets').json(pet).loginAs(usuario)
     response.assertStatus(200)
   })
 
   test('permitir pet com várias cores', async ({ client }) => {
-    const usuario = (await UsuarioFactory.create()).toJSON()
+    const usuario = await UsuarioFactory.create()
     const pet = (
       await PetFactory.merge({
         id: undefined,
@@ -164,7 +164,7 @@ test.group('Pet store', () => {
     pet.vistoEm = (await CoordenadaFactory.merge({ petId: undefined }).make()).toJSON()
     pet.cores = sampleSize(await Cor.all(), 2).map((cor) => cor.valor)
 
-    const response = await client.post('/pets').json(pet)
+    const response = await client.post('/pets').json(pet).loginAs(usuario)
     response.assertStatus(200)
   })
 })

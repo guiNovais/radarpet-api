@@ -17,7 +17,7 @@ test.group('Usuario show', () => {
   })
 
   test('falhar caso um usuário não for encontrado', async ({ client }) => {
-    const response = await client.patch('/pets/-1')
+    const response = await client.patch('/usuarios/-1')
     response.assertStatus(404)
   })
 })
