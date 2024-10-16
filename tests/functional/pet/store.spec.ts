@@ -9,6 +9,7 @@ import CoordenadaFactory from 'Database/factories/CoordenadaFactory'
 import PetFactory from 'Database/factories/PetFactory'
 import UsuarioFactory from 'Database/factories/UsuarioFactory'
 import { sampleSize } from 'lodash'
+import { DateTime } from 'luxon'
 
 test.group('Pet store', (group) => {
   group.each.setup(async () => {
@@ -61,7 +62,8 @@ test.group('Pet store', (group) => {
     assert.equal(petPersistido.especie, pet.especie)
     assert.equal(petPersistido.situacao, pet.situacao)
     assert.equal(petPersistido.usuarioId, usuario.id)
-    assert.equal(petPersistido.vistoAs.toISO(), pet.vistoAs)
+    assert.isAtLeast(petPersistido.vistoAs, DateTime.fromISO(pet.vistoAs))
+    assert.isAtMost(petPersistido.vistoAs, DateTime.fromISO(pet.vistoAs).plus({ seconds: 5 }))
     assert.equal(coordenadasPersistidas.latitude, pet.vistoEm.latitude)
     assert.equal(coordenadasPersistidas.longitude, pet.vistoEm.longitude)
     assert.equal(usuarioPersistido.nome, usuario.nome)

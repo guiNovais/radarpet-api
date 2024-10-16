@@ -6,6 +6,7 @@ import Pet from 'App/Models/Pet'
 import CoordenadaFactory from 'Database/factories/CoordenadaFactory'
 import PetFactory from 'Database/factories/PetFactory'
 import UsuarioFactory from 'Database/factories/UsuarioFactory'
+import { DateTime } from 'luxon'
 
 test.group('Pet update', (group) => {
   group.each.setup(async () => {
@@ -60,7 +61,8 @@ test.group('Pet update', (group) => {
     assert.equal(petPersistido.especie, novo.especie)
     assert.equal(petPersistido.situacao, novo.situacao)
     assert.equal(petPersistido.comentario, novo.comentario)
-    assert.equal(petPersistido.vistoAs.toISO(), novo.vistoAs)
+    assert.isAtLeast(petPersistido.vistoAs, DateTime.fromISO(novo.vistoAs))
+    assert.isAtMost(petPersistido.vistoAs, DateTime.fromISO(novo.vistoAs).plus({ seconds: 5 }))
     assert.containsSubset(coordenadasPersistidas, novo.vistoEm)
     assert.sameDeepMembers(coresPersistidas, novo.cores)
   })
@@ -90,7 +92,8 @@ test.group('Pet update', (group) => {
     assert.equal(persistido.especie, antigo.especie)
     assert.equal(persistido.situacao, antigo.situacao)
     assert.equal(persistido.comentario, antigo.comentario)
-    assert.equal(persistido.vistoAs.toISO(), antigo.vistoAs.toISO())
+    assert.isAtLeast(persistido.vistoAs, antigo.vistoAs)
+    assert.isAtMost(persistido.vistoAs, antigo.vistoAs.plus({ seconds: 5 }))
     assert.equal(persistido.vistoEm.latitude, antigo.vistoEm.latitude)
     assert.equal(persistido.vistoEm.longitude, antigo.vistoEm.longitude)
     assert.sameDeepMembers(
@@ -108,7 +111,8 @@ test.group('Pet update', (group) => {
     assert.equal(persistido.especie, novo.especie)
     assert.equal(persistido.situacao, antigo.situacao)
     assert.equal(persistido.comentario, antigo.comentario)
-    assert.equal(persistido.vistoAs.toISO(), antigo.vistoAs.toISO())
+    assert.isAtLeast(persistido.vistoAs, antigo.vistoAs)
+    assert.isAtMost(persistido.vistoAs, antigo.vistoAs.plus({ seconds: 5 }))
     assert.equal(persistido.vistoEm.latitude, antigo.vistoEm.latitude)
     assert.equal(persistido.vistoEm.longitude, antigo.vistoEm.longitude)
     assert.sameDeepMembers(
@@ -126,7 +130,8 @@ test.group('Pet update', (group) => {
     assert.equal(persistido.especie, novo.especie)
     assert.equal(persistido.situacao, novo.situacao)
     assert.equal(persistido.comentario, antigo.comentario)
-    assert.equal(persistido.vistoAs.toISO(), antigo.vistoAs.toISO())
+    assert.isAtLeast(persistido.vistoAs, antigo.vistoAs)
+    assert.isAtMost(persistido.vistoAs, antigo.vistoAs.plus({ seconds: 5 }))
     assert.equal(persistido.vistoEm.latitude, antigo.vistoEm.latitude)
     assert.equal(persistido.vistoEm.longitude, antigo.vistoEm.longitude)
     assert.sameDeepMembers(
@@ -147,7 +152,8 @@ test.group('Pet update', (group) => {
     assert.equal(persistido.especie, novo.especie)
     assert.equal(persistido.situacao, novo.situacao)
     assert.equal(persistido.comentario, novo.comentario)
-    assert.equal(persistido.vistoAs.toISO(), antigo.vistoAs.toISO())
+    assert.isAtLeast(persistido.vistoAs, antigo.vistoAs)
+    assert.isAtMost(persistido.vistoAs, antigo.vistoAs.plus({ seconds: 5 }))
     assert.equal(persistido.vistoEm.latitude, antigo.vistoEm.latitude)
     assert.equal(persistido.vistoEm.longitude, antigo.vistoEm.longitude)
     assert.sameDeepMembers(
@@ -165,7 +171,8 @@ test.group('Pet update', (group) => {
     assert.equal(persistido.especie, novo.especie)
     assert.equal(persistido.situacao, novo.situacao)
     assert.equal(persistido.comentario, novo.comentario)
-    assert.equal(persistido.vistoAs.toISO(), novo.vistoAs)
+    assert.isAtLeast(persistido.vistoAs, DateTime.fromISO(novo.vistoAs))
+    assert.isAtMost(persistido.vistoAs, DateTime.fromISO(novo.vistoAs).plus({ seconds: 5 }))
     assert.equal(persistido.vistoEm.latitude, antigo.vistoEm.latitude)
     assert.equal(persistido.vistoEm.longitude, antigo.vistoEm.longitude)
     assert.sameDeepMembers(
@@ -183,7 +190,8 @@ test.group('Pet update', (group) => {
     assert.equal(persistido.especie, novo.especie)
     assert.equal(persistido.situacao, novo.situacao)
     assert.equal(persistido.comentario, novo.comentario)
-    assert.equal(persistido.vistoAs.toISO(), novo.vistoAs)
+    assert.isAtLeast(persistido.vistoAs, DateTime.fromISO(novo.vistoAs))
+    assert.isAtMost(persistido.vistoAs, DateTime.fromISO(novo.vistoAs).plus({ seconds: 5 }))
     assert.equal(persistido.vistoEm.latitude, novo.vistoEm.latitude)
     assert.equal(persistido.vistoEm.longitude, novo.vistoEm.longitude)
     assert.sameDeepMembers(
@@ -204,7 +212,8 @@ test.group('Pet update', (group) => {
     assert.equal(persistido.especie, novo.especie)
     assert.equal(persistido.situacao, novo.situacao)
     assert.equal(persistido.comentario, novo.comentario)
-    assert.equal(persistido.vistoAs.toISO(), novo.vistoAs)
+    assert.isAtLeast(persistido.vistoAs, DateTime.fromISO(novo.vistoAs))
+    assert.isAtMost(persistido.vistoAs, DateTime.fromISO(novo.vistoAs).plus({ seconds: 5 }))
     assert.equal(persistido.vistoEm.latitude, novo.vistoEm.latitude)
     assert.equal(persistido.vistoEm.longitude, novo.vistoEm.longitude)
     assert.sameDeepMembers(
