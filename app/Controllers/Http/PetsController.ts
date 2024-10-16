@@ -7,6 +7,7 @@ import { DateTime } from 'luxon'
 import PetStoreValidator from 'App/Validators/PetStoreValidator'
 import PetUpdateValidator from 'App/Validators/PetUpdateValidator'
 import Coordenada from 'App/Models/Coordenada'
+import Cor from 'App/Models/Cor'
 
 export default class PetsController {
   public async index({ request }) {
@@ -22,22 +23,23 @@ export default class PetsController {
   public async show({ request }) {
     const pet = await Pet.findOrFail(request.routeParams.id)
     await pet.load('vistoEm')
+    await pet.load('cores')
     return pet
   }
 
   public async store({ request }) {
     await request.validate(PetStoreValidator)
 
-    const pet = new Pet().fill({
-      nome: request.body()['nome'],
-      especie: request.body()['especie'],
-      cor: request.body()['cor'],
-      situacao: request.body()['situacao'],
-      comentario: request.body()['comentario'],
-      vistoAs: DateTime.fromISO(request.body()['vistoAs']),
-      usuarioId: request.body()['usuarioId'],
-    })
-    await pet.save()
+    const pet = await new Pet()
+      .fill({
+        nome: request.body()['nome'],
+        especie: request.body()['especie'],
+        situacao: request.body()['situacao'],
+        comentario: request.body()['comentario'],
+        vistoAs: DateTime.fromISO(request.body()['vistoAs']),
+        usuarioId: request.body()['usuarioId'],
+      })
+      .save()
 
     const vistoEm = new Coordenada()
     vistoEm.latitude = request.body().vistoEm.latitude
@@ -45,6 +47,11 @@ export default class PetsController {
     vistoEm.petId = pet.id
     await vistoEm.save()
     await pet.load('vistoEm')
+
+    const cores = await Cor.query().whereIn('valor', request.body().cores)
+    const ids = cores.map((e) => e.id)
+    await pet.related('cores').attach(ids)
+    await pet.load('cores')
 
     return pet
   }
@@ -56,21 +63,29 @@ export default class PetsController {
     pet.merge({
       nome: request.body()['nome'],
       especie: request.body()['especie'],
-      cor: request.body()['cor'],
       situacao: request.body()['situacao'],
       comentario: request.body()['comentario'],
     })
-    if (request.body()['vistoAs']) pet.vistoAs = DateTime.fromISO(request.body()['vistoAs'])
     await pet.save()
 
+    if (request.body()['vistoAs']) {
+      pet.vistoAs = DateTime.fromISO(request.body()['vistoAs'])
+    }
+
+    if (request.body()['cores']) {
+      const cores = await Cor.query().whereIn('valor', request.body()['cores'])
+      await pet.related('cores').detach()
+      await pet.related('cores').attach(cores.map((cor) => cor.id))
+      await pet.load('cores')
+    }
+
     if (request.body()['vistoEm']) {
-      const antigo = await Coordenada.findByOrFail('petId', pet.id)
-      await antigo.delete()
-      await Coordenada.create({
+      const coordenadas = await Coordenada.findByOrFail('petId', pet.id)
+      coordenadas.merge({
         latitude: request.body()['vistoEm'].latitude,
         longitude: request.body()['vistoEm'].longitude,
-        petId: pet.id,
       })
+      await coordenadas.save()
       await pet.load('vistoEm')
     }
 

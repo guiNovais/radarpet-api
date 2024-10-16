@@ -1,9 +1,7 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
-import { Especie } from 'App/Models/Especie'
-import { Situacao } from 'App/Models/Situacao'
 
 export default class extends BaseSchema {
-  protected tableName = 'pets'
+  protected tableName = 'cores_pets'
 
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
@@ -15,12 +13,9 @@ export default class extends BaseSchema {
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
 
-      table.string('nome')
-      table.enum('especie', Object.values(Especie))
-      table.enum('situacao', Object.values(Situacao))
-      table.string('comentario')
-      table.timestamp('visto_as')
-      table.integer('usuario_id').unique().unsigned().references('usuarios.id').onDelete('CASCADE')
+      table.integer('cor_id').unsigned().references('cores.id')
+      table.integer('pet_id').unsigned().references('pets.id')
+      table.unique(['cor_id', 'pet_id'])
     })
   }
 
