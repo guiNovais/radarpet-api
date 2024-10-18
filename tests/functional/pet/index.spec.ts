@@ -74,4 +74,6 @@ test.group('Pet index', (group) => {
     const ids = (response.body() as Pet[]).map((e) => e.id)
     assert.notInclude(ids, pet.id)
   })
+
+  test('proibir pets sem nenhuma imagem associada')
 })

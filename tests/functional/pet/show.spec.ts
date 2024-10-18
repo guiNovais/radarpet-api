@@ -43,5 +43,9 @@ test.group('Pet show', (group) => {
     )
   })
 
-  // TODO teste falhar caso um pet não for encontrado
+  test('falhar caso um pet não for encontrado')
+
+  test('impedir que pet sem imagem seja público')
+
+  test('exigir usuário autenticado e autorizado para recuperar pet sem nenhuma imagem')
 })
