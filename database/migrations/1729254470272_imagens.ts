@@ -12,6 +12,16 @@ export default class extends BaseSchema {
        */
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
+
+      table.string('file_name').unique()
+      table
+        .integer('usuario_id')
+        .nullable()
+        .unique()
+        .unsigned()
+        .references('usuarios.id')
+        .onDelete('CASCADE')
+      table.integer('pet_id').nullable().unsigned().references('pets.id').onDelete('CASCADE')
     })
   }
 
