@@ -39,3 +39,4 @@ Route.post('/login', 'AuthController.login')
 
 Route.get('/imagens', 'ImagensController.show')
 Route.post('/imagens', 'ImagensController.store')
+Route.patch('/imagens', 'ImagensController.update')

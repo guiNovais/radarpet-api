@@ -6,6 +6,7 @@ import ImagemStoreValidator from 'App/Validators/ImagemStoreValidator'
 import Drive from '@ioc:Adonis/Core/Drive'
 import Database from '@ioc:Adonis/Lucid/Database'
 import ImagemShowValidator from 'App/Validators/ImagemShowValidator'
+import ImagemUpdateValidator from 'App/Validators/ImagemUpdateValidator'
 
 export default class ImagensController {
   public async show({ request, response }) {
@@ -56,5 +57,24 @@ export default class ImagensController {
           usuarioId: usuario.id,
         }
     return new Imagem().fill(data).save()
+  }
+
+  public async update({ request, response, auth }) {
+    const usuario = await auth.use('api').authenticate()
+    const body = await request.validate(ImagemUpdateValidator)
+    let pet: Pet | null = null
+
+    if (body.petId) {
+      pet = await Pet.findOrFail(body.petId)
+      await pet.load('imagem')
+      if (!pet.imagem[body.index]) return response.notFound()
+      if (pet.usuarioId !== usuario.id) return response.unauthorized()
+    }
+
+    await body.imagem.moveToDisk('./')
+
+    return pet
+      ? await Imagem.updateOrCreate({ petId: pet.id }, { fileName: body.imagem.fileName })
+      : await Imagem.updateOrCreate({ usuarioId: usuario.id }, { fileName: body.imagem.fileName })
   }
 }
