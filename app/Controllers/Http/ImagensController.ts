@@ -3,8 +3,32 @@
 import Imagem from 'App/Models/Imagem'
 import Pet from 'App/Models/Pet'
 import ImagemStoreValidator from 'App/Validators/ImagemStoreValidator'
+import Drive from '@ioc:Adonis/Core/Drive'
+import Database from '@ioc:Adonis/Lucid/Database'
+import ImagemShowValidator from 'App/Validators/ImagemShowValidator'
 
 export default class ImagensController {
+  public async show({ request, response }) {
+    const queryParams = await request.validate(ImagemShowValidator)
+    const keys = Object.keys(queryParams)
+
+    if (keys.includes('usuarioId'))
+      return await Drive.get(
+        (
+          await Imagem.findByOrFail('usuarioId', queryParams.usuarioId)
+        ).fileName
+      )
+
+    const files = await Database.query()
+      .select('file_name')
+      .from('imagens as i')
+      .innerJoin('pets as p', 'p.id', 'i.pet_id')
+      .orderBy('i.updated_at')
+    return files[queryParams.index]
+      ? await Drive.get(files[queryParams.index].file_name)
+      : response.notFound()
+  }
+
   public async store({ request, response, auth }) {
     const usuario = await auth.use('api').authenticate()
     const body = await request.validate(ImagemStoreValidator)
