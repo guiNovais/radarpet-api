@@ -43,7 +43,10 @@ test.group('Pet show', (group) => {
     )
   })
 
-  test('falhar caso um pet não for encontrado')
+  test('falhar caso um pet não for encontrado', async ({ client }) => {
+    const response = await client.get('/pets/0')
+    response.assertStatus(404)
+  })
 
   test('impedir que pet sem imagem seja público')
 
