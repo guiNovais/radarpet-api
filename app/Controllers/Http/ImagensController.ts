@@ -7,6 +7,7 @@ import Drive from '@ioc:Adonis/Core/Drive'
 import Database from '@ioc:Adonis/Lucid/Database'
 import ImagemShowValidator from 'App/Validators/ImagemShowValidator'
 import ImagemUpdateValidator from 'App/Validators/ImagemUpdateValidator'
+import ImagemDestroyValidator from 'App/Validators/ImagemDestroyValidator'
 
 export default class ImagensController {
   public async show({ request, response }) {
@@ -76,5 +77,22 @@ export default class ImagensController {
     return pet
       ? await Imagem.updateOrCreate({ petId: pet.id }, { fileName: body.imagem.fileName })
       : await Imagem.updateOrCreate({ usuarioId: usuario.id }, { fileName: body.imagem.fileName })
+  }
+
+  public async destroy({ request, response, auth }) {
+    const usuario = await auth.use('api').authenticate()
+    const body = await request.validate(ImagemDestroyValidator)
+    let pet: Pet | null
+
+    if (body.petId) {
+      pet = await Pet.findOrFail(body.petId)
+      await pet.load('imagem')
+      if (!pet.imagem[body.index]) return response.notFound()
+      if (pet.usuarioId !== usuario.id) return response.unauthorized()
+      return pet.imagem[body.index].delete()
+    }
+
+    const imagem = await Imagem.findByOrFail('usuarioId', usuario.id)
+    return imagem.delete()
   }
 }
