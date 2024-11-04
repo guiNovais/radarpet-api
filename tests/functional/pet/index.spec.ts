@@ -2,6 +2,7 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import Pet from 'App/Models/Pet'
 import { Situacao } from 'App/Models/Situacao'
+import ImagemFactory from 'Database/factories/ImagemFactory'
 import PetFactory from 'Database/factories/PetFactory'
 import { DateTime } from 'luxon'
 
@@ -12,7 +13,11 @@ test.group('Pet index', (group) => {
   })
 
   test('recuperar todos os pets', async ({ client, assert }) => {
-    await PetFactory.merge({ situacao: Situacao.Perdido }).createMany(3)
+    const pets = await PetFactory.merge({ situacao: Situacao.Perdido }).createMany(3)
+    await ImagemFactory.merge({ petId: pets[0].id }).create()
+    await ImagemFactory.merge({ petId: pets[1].id }).create()
+    await ImagemFactory.merge({ petId: pets[2].id }).create()
+
     const response = await client.get('/pets?latitude=0.000000&longitude=0.000000')
     response.assertStatus(200)
     assert.equal(response.body().length, 3)
@@ -75,5 +80,10 @@ test.group('Pet index', (group) => {
     assert.notInclude(ids, pet.id)
   })
 
-  test('proibir pets sem nenhuma imagem associada')
+  test('proibir pets sem nenhuma imagem associada', async ({ client, assert }) => {
+    await PetFactory.merge({ situacao: Situacao.Perdido }).create()
+    const response = await client.get('/pets?latitude=0.000000&longitude=0.000000')
+    response.assertStatus(200)
+    assert.equal(response.body().length, 0)
+  })
 })

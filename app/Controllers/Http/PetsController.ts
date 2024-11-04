@@ -16,6 +16,7 @@ export default class PetsController {
     const anoPassado = DateTime.now().minus({ year: 1 }).toISO()!
 
     return await Pet.query()
+      .innerJoin('imagens', 'pets.id', 'imagens.pet_id')
       .where('visto_as', '>', anoPassado)
       .andWhere('situacao', Situacao.Perdido)
   }
