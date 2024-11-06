@@ -21,10 +21,19 @@ export default class PetsController {
       .andWhere('situacao', Situacao.Perdido)
   }
 
-  public async show({ request }) {
+  public async show({ request, response, auth }) {
     const pet = await Pet.findOrFail(request.routeParams.id)
     await pet.load('vistoEm')
     await pet.load('cores')
+    await pet.load('imagem')
+
+    if (pet.imagem.length === 0) {
+      const ususario = await auth.use('api').authenticate()
+      if (pet.usuarioId !== ususario.id) {
+        return response.notFound()
+      }
+    }
+
     return pet
   }
 

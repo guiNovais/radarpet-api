@@ -2,7 +2,9 @@ import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
 import Cor from 'App/Models/Cor'
 import CoordenadaFactory from 'Database/factories/CoordenadaFactory'
+import ImagemFactory from 'Database/factories/ImagemFactory'
 import PetFactory from 'Database/factories/PetFactory'
+import UsuarioFactory from 'Database/factories/UsuarioFactory'
 import { sampleSize } from 'lodash'
 import { DateTime } from 'luxon'
 
@@ -17,6 +19,7 @@ test.group('Pet show', (group) => {
     const coordenadas = await CoordenadaFactory.merge({ petId: pet.id }).create()
     const cores = sampleSize(await Cor.all(), 2)
     await pet.related('cores').attach(cores.map((cor) => cor.id))
+    await ImagemFactory.merge({ petId: pet.id }).create()
 
     const response = await client.get(`/pets/${pet.id}`)
     response.assertStatus(200)
@@ -48,7 +51,20 @@ test.group('Pet show', (group) => {
     response.assertStatus(404)
   })
 
-  test('impedir que pet sem imagem seja público')
+  test('impedir que pet sem imagem seja público', async ({ client }) => {
+    const pet = await PetFactory.create()
 
-  test('exigir usuário autenticado e autorizado para recuperar pet sem nenhuma imagem')
+    const response = await client.get(`/pets/${pet.id}`)
+    response.assertStatus(401)
+  })
+
+  test('exigir usuário autenticado e autorizado para recuperar pet sem nenhuma imagem', async ({
+    client,
+  }) => {
+    const usuario = await UsuarioFactory.create()
+    const pet = await PetFactory.merge({ usuarioId: usuario.id }).create()
+
+    const response = await client.get(`/pets/${pet.id}`).loginAs(usuario)
+    response.assertStatus(200)
+  })
 })
