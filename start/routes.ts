@@ -36,3 +36,8 @@ Route.patch('/usuarios/', 'UsuariosController.update')
 Route.delete('/usuarios/', 'UsuariosController.destroy')
 
 Route.post('/login', 'AuthController.login')
+
+Route.get('/imagens', 'ImagensController.show')
+Route.post('/imagens', 'ImagensController.store')
+Route.patch('/imagens', 'ImagensController.update')
+Route.delete('imagens', 'ImagensController.destroy')
