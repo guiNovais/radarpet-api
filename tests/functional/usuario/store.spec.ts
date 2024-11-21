@@ -11,7 +11,6 @@ test.group('Usuario store', (group) => {
 
   test('armazenar um usuário com sucesso', async ({ client, assert }) => {
     const usuario = (await UsuarioFactory.merge({ id: undefined }).make()).toJSON()
-    usuario.password = '$Wn29Q%k'
 
     const response = await client.post('/usuarios').json(usuario)
     response.assertStatus(200)
@@ -23,7 +22,7 @@ test.group('Usuario store', (group) => {
     assert.equal(usuarioPersistido.nome, usuario.nome)
     assert.equal(usuarioPersistido.email, usuario.email)
     assert.equal(usuarioPersistido.telefone, usuario.telefone)
-    assert.notEqual(usuarioPersistido.password, usuario.password)
+    //TODO garantir que nenhuma propriedade além dessas foram recuperadas
   })
 
   test('exigir parâmetros obrigatórios ao armazenar um usuário', async ({ client }) => {
@@ -74,4 +73,6 @@ test.group('Usuario store', (group) => {
       ],
     })
   })
+
+  test('verificar envio de email para definir senha')
 })

@@ -33,4 +33,6 @@ test.group('Usuario login', (group) => {
     })
     response.assertStatus(400)
   })
+
+  test('falhar caso o usuário não estiver ativo')
 })
