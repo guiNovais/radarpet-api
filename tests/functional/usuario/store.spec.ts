@@ -6,7 +6,10 @@ import UsuarioFactory from 'Database/factories/UsuarioFactory'
 test.group('Usuario store', (group) => {
   group.each.setup(async () => {
     await Database.beginGlobalTransaction()
-    return () => Database.rollbackGlobalTransaction()
+  })
+
+  group.each.teardown(async () => {
+    await Database.rollbackGlobalTransaction()
   })
 
   test('armazenar um usuário com sucesso', async ({ client, assert }) => {
