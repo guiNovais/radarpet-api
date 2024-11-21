@@ -17,12 +17,20 @@ test.group('Usuario store', (group) => {
     assert.equal(response.body().nome, usuario.nome)
     assert.equal(response.body().email, usuario.email)
     assert.equal(response.body().telefone, usuario.telefone)
+    assert.onlyProperties(response.body(), [
+      'id',
+      'created_at',
+      'updated_at',
+      'nome',
+      'email',
+      'telefone',
+    ])
 
     const usuarioPersistido = await Usuario.findOrFail(response.body()['id'])
     assert.equal(usuarioPersistido.nome, usuario.nome)
     assert.equal(usuarioPersistido.email, usuario.email)
     assert.equal(usuarioPersistido.telefone, usuario.telefone)
-    //TODO garantir que nenhuma propriedade além dessas foram recuperadas
+    assert.isNull(usuarioPersistido.password)
   })
 
   test('exigir parâmetros obrigatórios ao armazenar um usuário', async ({ client }) => {

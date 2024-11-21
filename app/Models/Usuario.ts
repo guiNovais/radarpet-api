@@ -37,9 +37,6 @@ export default class Usuario extends BaseModel {
   @column({ serializeAs: null })
   public password: string
 
-  @column()
-  public rememberMeToken: string | null
-
   @hasOne(() => Imagem)
   public imagem: HasOne<typeof Imagem>
 
