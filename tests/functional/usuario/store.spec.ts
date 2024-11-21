@@ -1,19 +1,26 @@
+import Mail from '@ioc:Adonis/Addons/Mail'
+import { FakeMailManagerContract } from '@ioc:Adonis/Addons/Mail'
 import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
+import Token from 'App/Models/Token'
 import Usuario from 'App/Models/Usuario'
 import UsuarioFactory from 'Database/factories/UsuarioFactory'
 
 test.group('Usuario store', (group) => {
+  let mailer: FakeMailManagerContract
+
   group.each.setup(async () => {
     await Database.beginGlobalTransaction()
+    mailer = Mail.fake()
   })
 
   group.each.teardown(async () => {
     await Database.rollbackGlobalTransaction()
+    Mail.restore()
   })
 
   test('armazenar um usuário com sucesso', async ({ client, assert }) => {
-    const usuario = (await UsuarioFactory.merge({ id: undefined }).make()).toJSON()
+    const usuario = await UsuarioFactory.make()
 
     const response = await client.post('/usuarios').json(usuario)
     response.assertStatus(200)
@@ -85,5 +92,18 @@ test.group('Usuario store', (group) => {
     })
   })
 
-  test('verificar envio de email para definir senha')
+  test('verificar envio de email para definir senha', async ({ client, assert }) => {
+    const usuario = await UsuarioFactory.make()
+    const response = await client.post('/usuarios').json(usuario)
+    const token = await Token.findByOrFail('usuarioId', response.body().id)
+
+    assert.isTrue(
+      mailer.exists((mail) => {
+        return (
+          mail.subject === 'Ative sua conta RadarPet' &&
+          mail.text === `Seu código de ativação do RadarPet é: ${token.valor}`
+        )
+      })
+    )
+  })
 })

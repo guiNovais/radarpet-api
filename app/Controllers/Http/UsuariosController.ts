@@ -1,8 +1,11 @@
 // import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
+import Mail from '@ioc:Adonis/Addons/Mail'
 import Usuario from 'App/Models/Usuario'
 import UsuarioStoreValidator from 'App/Validators/UsuarioStoreValidator'
 import UsuarioUpdateValidator from 'App/Validators/UsuarioUpdateValidator'
+import { cuid } from '@ioc:Adonis/Core/Helpers'
+import Token from 'App/Models/Token'
 
 export default class UsuariosController {
   public async show({ request }) {
@@ -10,8 +13,24 @@ export default class UsuariosController {
   }
 
   public async store({ request }) {
-    await request.validate(UsuarioStoreValidator)
-    return Usuario.create(request.body())
+    const body = await request.validate(UsuarioStoreValidator)
+    const usuario = await Usuario.create(body)
+
+    const token = cuid()
+    await Token.create({
+      usuarioId: usuario.id,
+      valor: token,
+    })
+
+    await Mail.send((message) => {
+      message
+        .from('no-reply@example.com')
+        .to(body.email)
+        .subject('Ative sua conta RadarPet')
+        .text(`Seu código de ativação do RadarPet é: ${token}`)
+    })
+
+    return usuario
   }
 
   public async update({ request, auth }) {
