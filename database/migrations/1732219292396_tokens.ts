@@ -13,7 +13,14 @@ export default class extends BaseSchema {
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
       table.string('valor')
-      table.integer('usuario_id').unique().unsigned().references('usuarios.id').onDelete('CASCADE')
+      table.string('tipo').notNullable()
+      table.string('status').notNullable()
+      table
+        .integer('usuario_id')
+        .notNullable()
+        .unsigned()
+        .references('usuarios.id')
+        .onDelete('CASCADE')
     })
   }
 

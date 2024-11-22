@@ -22,4 +22,20 @@ export default class Token extends BaseModel {
 
   @belongsTo(() => Usuario)
   public usuario: BelongsTo<typeof Usuario>
+
+  @column()
+  public tipo: Tipo
+
+  @column()
+  public status: Status
+}
+
+export enum Tipo {
+  Verificar = 'Verificar',
+  Definir = 'Definir',
+}
+
+export enum Status {
+  Ativo = 'Ativo',
+  Inativo = 'Inativo',
 }

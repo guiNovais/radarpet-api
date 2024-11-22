@@ -5,7 +5,7 @@ import Usuario from 'App/Models/Usuario'
 import UsuarioStoreValidator from 'App/Validators/UsuarioStoreValidator'
 import UsuarioUpdateValidator from 'App/Validators/UsuarioUpdateValidator'
 import { cuid } from '@ioc:Adonis/Core/Helpers'
-import Token from 'App/Models/Token'
+import Token, { Status, Tipo } from 'App/Models/Token'
 
 export default class UsuariosController {
   public async show({ request }) {
@@ -20,6 +20,8 @@ export default class UsuariosController {
     await Token.create({
       usuarioId: usuario.id,
       valor: token,
+      tipo: Tipo.Verificar,
+      status: Status.Ativo,
     })
 
     await Mail.send((message) => {
