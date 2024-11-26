@@ -1,7 +1,9 @@
+import Mail from '@ioc:Adonis/Addons/Mail'
 import { cuid } from '@ioc:Adonis/Core/Helpers'
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
 import Token, { Status, Tipo } from 'App/Models/Token'
+import Usuario from 'App/Models/Usuario'
 import VerifyTokenValidator from 'App/Validators/VerifyTokenValidator'
 import { DateTime } from 'luxon'
 
@@ -34,5 +36,24 @@ export default class AuthController {
     await Token.updateOrCreate({ id: verifyToken.id }, { status: Status.Inativo })
 
     return defineToken
+  }
+
+  public async reset({ request }: HttpContextContract) {
+    const { usuarioId } = request.params()
+    const usuario = await Usuario.findOrFail(usuarioId)
+    const token = await Token.create({
+      usuarioId,
+      status: Status.Ativo,
+      tipo: Tipo.Verificar,
+      valor: cuid(),
+    })
+
+    await Mail.send((message) => {
+      message
+        .from('no-reply@example.com')
+        .to(usuario.email)
+        .subject('Ative sua conta RadarPet')
+        .text(`Seu código de ativação do RadarPet é: ${token.valor}`)
+    })
   }
 }

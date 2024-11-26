@@ -37,6 +37,7 @@ Route.delete('/usuarios/', 'UsuariosController.destroy')
 
 Route.post('/login', 'AuthController.login')
 Route.post('/verify', 'AuthController.verify')
+Route.post('/reset/:usuarioId', 'AuthController.reset')
 
 Route.get('/imagens', 'ImagensController.show')
 Route.post('/imagens', 'ImagensController.store')
