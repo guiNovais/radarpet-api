@@ -4,6 +4,7 @@ import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Database from '@ioc:Adonis/Lucid/Database'
 import Token, { Status, Tipo } from 'App/Models/Token'
 import Usuario from 'App/Models/Usuario'
+import DefinePasswordValidator from 'App/Validators/DefinePasswordValidator'
 import VerifyTokenValidator from 'App/Validators/VerifyTokenValidator'
 import { DateTime } from 'luxon'
 
@@ -55,5 +56,17 @@ export default class AuthController {
         .subject('Ative sua conta RadarPet')
         .text(`Seu código de ativação do RadarPet é: ${token.valor}`)
     })
+  }
+
+  public async define({ request, response }: HttpContextContract) {
+    const body = await request.validate(DefinePasswordValidator)
+    const token = await Token.findByOrFail('valor', body.token)
+
+    if (token.tipo !== Tipo.Definir) return response.badRequest()
+    if (token.status !== Status.Ativo) return response.badRequest()
+    if (token.createdAt <= DateTime.now().minus({ hours: 1 })) return response.badRequest()
+
+    await Usuario.updateOrCreate({ id: token.usuarioId }, { password: body.password })
+    await token.merge({ status: Status.Inativo }).save()
   }
 }
