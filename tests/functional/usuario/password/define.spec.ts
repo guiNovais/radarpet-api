@@ -26,7 +26,7 @@ test.group('Usuario password define', (group) => {
       tipo: Tipo.Definir,
     }).create()
 
-    const response = await client.post('/define').json({ token: token.valor, password })
+    const response = await client.post('/password/define').json({ token: token.valor, password })
     response.assertStatus(200)
 
     await token.load('usuario')
@@ -41,7 +41,7 @@ test.group('Usuario password define', (group) => {
       tipo: Tipo.Verificar,
     }).create()
 
-    const response = await client.post('/define').json({ token: token.valor, password })
+    const response = await client.post('/password/define').json({ token: token.valor, password })
 
     response.assertStatus(400)
   })
@@ -55,7 +55,7 @@ test.group('Usuario password define', (group) => {
       tipo: Tipo.Definir,
     }).create()
 
-    const response = await client.post('/define').json({ token: token.valor, password })
+    const response = await client.post('/password/define').json({ token: token.valor, password })
 
     response.assertStatus(400)
   })
@@ -68,10 +68,12 @@ test.group('Usuario password define', (group) => {
       tipo: Tipo.Definir,
     }).create()
 
-    const response1 = await client.post('/define').json({ token: token.valor, password: password })
+    const response1 = await client
+      .post('/password/define')
+      .json({ token: token.valor, password: password })
     response1.assertStatus(200)
 
-    const response2 = await client.post('/define').json({ token: token.valor, password })
+    const response2 = await client.post('/password/define').json({ token: token.valor, password })
     response2.assertStatus(400)
   })
 
@@ -83,7 +85,9 @@ test.group('Usuario password define', (group) => {
       tipo: Tipo.Definir,
     }).create()
 
-    const response = await client.post('/define').json({ token: token.valor, password: 'Ab1' })
+    const response = await client
+      .post('/password/define')
+      .json({ token: token.valor, password: 'Ab1' })
 
     response.assertStatus(422)
   })
@@ -95,7 +99,7 @@ test.group('Usuario password define', (group) => {
       tipo: Tipo.Definir,
     }).create()
 
-    const response = await client.post('/define').json({
+    const response = await client.post('/password/define').json({
       token: token.valor,
       password: 'Ex labore et tempor deserunt consectetur consectetur 123.',
     })
@@ -110,7 +114,7 @@ test.group('Usuario password define', (group) => {
       tipo: Tipo.Definir,
     }).create()
 
-    const response = await client.post('/define').json({
+    const response = await client.post('/password/define').json({
       token: token.valor,
       password: password.toUpperCase(),
     })
@@ -125,7 +129,7 @@ test.group('Usuario password define', (group) => {
       tipo: Tipo.Definir,
     }).create()
 
-    const response = await client.post('/define').json({
+    const response = await client.post('/password/define').json({
       token: token.valor,
       password: password.toLowerCase(),
     })
@@ -140,7 +144,7 @@ test.group('Usuario password define', (group) => {
       tipo: Tipo.Definir,
     }).create()
 
-    const response = await client.post('/define').json({
+    const response = await client.post('/password/define').json({
       token: token.valor,
       password: 'Abcdefgh',
     })

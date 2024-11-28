@@ -21,7 +21,7 @@ test.group('Usuario password reset', (group) => {
   test('enviar email de redefinição de senha com sucesso', async ({ client, assert }) => {
     const usuario = await UsuarioFactory.create()
 
-    const response = await client.post(`/reset/${usuario.id}`)
+    const response = await client.post(`/password/reset/${usuario.id}`)
     response.assertStatus(200)
 
     const token = await Token.findByOrFail('usuarioId', usuario.id)
@@ -36,7 +36,7 @@ test.group('Usuario password reset', (group) => {
   })
 
   test('falhar caso um usuario não esteja armazenado', async ({ client }) => {
-    const response = await client.post(`/reset/1`)
+    const response = await client.post(`/password/reset/1`)
     response.assertStatus(404)
   })
 })

@@ -19,7 +19,7 @@ test.group('Usuario token verify', (group) => {
       status: Status.Ativo,
     }).create()
 
-    const response = await client.post(`/verify?token=${verifyToken.valor}`)
+    const response = await client.post(`/token/${verifyToken.valor}`)
     response.assertStatus(200)
 
     await verifyToken.refresh()
@@ -46,7 +46,7 @@ test.group('Usuario token verify', (group) => {
       status: Status.Ativo,
     }).create()
 
-    const response = await client.post(`/verify?token=${verifyToken.valor}`)
+    const response = await client.post(`/token/${verifyToken.valor}`)
     response.assertStatus(404)
   })
 
@@ -58,7 +58,7 @@ test.group('Usuario token verify', (group) => {
       status: Status.Inativo,
     }).create()
 
-    const response = await client.post(`/verify?token=${verifyToken.valor}`)
+    const response = await client.post(`/token/${verifyToken.valor}`)
     response.assertStatus(404)
   })
 })
