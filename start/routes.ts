@@ -36,6 +36,7 @@ Route.patch('/usuarios/', 'UsuariosController.update')
 Route.delete('/usuarios/', 'UsuariosController.destroy')
 
 Route.post('/login', 'AuthController.login')
+Route.post('/logout', 'AuthController.logout')
 Route.post('/verify', 'AuthController.verify')
 Route.post('/reset/:usuarioId', 'AuthController.reset')
 Route.post('/define/', 'AuthController.define')

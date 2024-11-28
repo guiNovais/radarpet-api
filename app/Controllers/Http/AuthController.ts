@@ -13,6 +13,10 @@ export default class AuthController {
     return await auth.use('api').attempt(request.input('email'), request.input('password'))
   }
 
+  public async logout({ auth }) {
+    return await auth.use('api').logout()
+  }
+
   public async verify({ request }: HttpContextContract) {
     const { token } = await request.validate(VerifyTokenValidator)
 
