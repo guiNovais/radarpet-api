@@ -11,6 +11,7 @@ import {
 import Pet from './Pet'
 import Hash from '@ioc:Adonis/Core/Hash'
 import Imagem from './Imagem'
+import Token from './Token'
 
 export default class Usuario extends BaseModel {
   @column({ isPrimary: true })
@@ -37,11 +38,11 @@ export default class Usuario extends BaseModel {
   @column({ serializeAs: null })
   public password: string
 
-  @column()
-  public rememberMeToken: string | null
-
   @hasOne(() => Imagem)
   public imagem: HasOne<typeof Imagem>
+
+  @hasMany(() => Token)
+  public token: HasMany<typeof Token>
 
   @beforeSave()
   public static async hashPassword(usuario: Usuario) {

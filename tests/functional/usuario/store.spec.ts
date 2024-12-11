@@ -1,29 +1,46 @@
+import Mail from '@ioc:Adonis/Addons/Mail'
+import { FakeMailManagerContract } from '@ioc:Adonis/Addons/Mail'
 import Database from '@ioc:Adonis/Lucid/Database'
 import { test } from '@japa/runner'
+import Token from 'App/Models/Token'
 import Usuario from 'App/Models/Usuario'
 import UsuarioFactory from 'Database/factories/UsuarioFactory'
 
 test.group('Usuario store', (group) => {
+  let mailer: FakeMailManagerContract
+
   group.each.setup(async () => {
     await Database.beginGlobalTransaction()
-    return () => Database.rollbackGlobalTransaction()
+    mailer = Mail.fake()
+  })
+
+  group.each.teardown(async () => {
+    await Database.rollbackGlobalTransaction()
+    Mail.restore()
   })
 
   test('armazenar um usuário com sucesso', async ({ client, assert }) => {
-    const usuario = (await UsuarioFactory.merge({ id: undefined }).make()).toJSON()
-    usuario.password = '$Wn29Q%k'
+    const usuario = await UsuarioFactory.make()
 
     const response = await client.post('/usuarios').json(usuario)
     response.assertStatus(200)
     assert.equal(response.body().nome, usuario.nome)
     assert.equal(response.body().email, usuario.email)
     assert.equal(response.body().telefone, usuario.telefone)
+    assert.onlyProperties(response.body(), [
+      'id',
+      'created_at',
+      'updated_at',
+      'nome',
+      'email',
+      'telefone',
+    ])
 
     const usuarioPersistido = await Usuario.findOrFail(response.body()['id'])
     assert.equal(usuarioPersistido.nome, usuario.nome)
     assert.equal(usuarioPersistido.email, usuario.email)
     assert.equal(usuarioPersistido.telefone, usuario.telefone)
-    assert.notEqual(usuarioPersistido.password, usuario.password)
+    assert.isNull(usuarioPersistido.password)
   })
 
   test('exigir parâmetros obrigatórios ao armazenar um usuário', async ({ client }) => {
@@ -73,5 +90,20 @@ test.group('Usuario store', (group) => {
         },
       ],
     })
+  })
+
+  test('verificar envio de email para definir senha', async ({ client, assert }) => {
+    const usuario = await UsuarioFactory.make()
+    const response = await client.post('/usuarios').json(usuario)
+    const token = await Token.findByOrFail('usuarioId', response.body().id)
+
+    assert.isTrue(
+      mailer.exists((mail) => {
+        return (
+          mail.subject === 'Ative sua conta RadarPet' &&
+          mail.text === `Seu código de ativação do RadarPet é: ${token.valor}`
+        )
+      })
+    )
   })
 })

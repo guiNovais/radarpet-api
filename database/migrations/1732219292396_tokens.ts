@@ -1,22 +1,26 @@
 import BaseSchema from '@ioc:Adonis/Lucid/Schema'
 
 export default class extends BaseSchema {
-  protected tableName = 'usuarios'
+  protected tableName = 'operation_tokens'
 
   public async up() {
     this.schema.createTable(this.tableName, (table) => {
-      table.increments('id').primary()
+      table.increments('id')
 
       /**
        * Uses timestamptz for PostgreSQL and DATETIME2 for MSSQL
        */
       table.timestamp('created_at', { useTz: true })
       table.timestamp('updated_at', { useTz: true })
-
-      table.string('nome')
-      table.string('email', 255).notNullable().unique()
-      table.string('telefone')
-      table.string('password', 180).nullable()
+      table.string('valor')
+      table.string('tipo').notNullable()
+      table.string('status').notNullable()
+      table
+        .integer('usuario_id')
+        .notNullable()
+        .unsigned()
+        .references('usuarios.id')
+        .onDelete('CASCADE')
     })
   }
 
